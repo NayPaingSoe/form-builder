@@ -4,6 +4,7 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useFormBuilderStore } from '@/stores/form_builder'
+import { toast } from 'vue-sonner'
 
 const inputType = ref('Text')
 const name = ref('full_name')
@@ -37,6 +38,9 @@ function saveField() {
     type: inputType.value,
   }
   store.addItem(item)
+  toast.success('Success', {
+    description: 'Text Field has been created',
+  })
   console.log(store.items)
 }
 </script>
@@ -53,17 +57,17 @@ function saveField() {
 
       <div class="pb-4">
         <label class="text-sm font-medium text-gray-700">Label</label>
-        <Input v-model="label" placeholder="Text Field" />
+        <Input v-model="label" placeholder="" />
       </div>
 
       <div class="pb-4">
         <label class="text-sm font-medium text-gray-700">Placeholder</label>
-        <Input v-model="placeholder" placeholder="Enter placeholder..." />
+        <Input v-model="placeholder" placeholder="" />
       </div>
 
       <div class="pb-4">
         <label class="text-sm font-medium text-gray-700">Predefined Value</label>
-        <Input v-model="predefined" placeholder="Default value..." />
+        <Input v-model="predefined" placeholder="" />
       </div>
 
       <div class="pb-4 flex items-center gap-2">
@@ -83,15 +87,10 @@ function saveField() {
           <option value="Compact">Compact</option>
         </select>
       </div>
-
-      <div class="pb-4">
-        <label class="text-sm font-medium text-gray-700">Type</label>
-        <Input v-model="inputType" placeholder="Text" />
-      </div>
     </CardContent>
 
     <CardFooter class="flex justify-between pt-4">
-      <Button @click="saveField" class="bg-blue-600 text-white hover:bg-blue-700">✔ Save</Button>
+      <Button @click="saveField" class="bg-blue-600 text-white hover:bg-blue-700">Save</Button>
     </CardFooter>
   </Card>
   <pre>
