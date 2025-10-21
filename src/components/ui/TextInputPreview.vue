@@ -26,15 +26,13 @@ const { item, modelValue, propFunction } = defineProps<{
   modelValue: unknown
   propFunction?: (v: string) => void
 }>()
-const emit = defineEmits<{ (e: 'update:modelValue', v: string): void }>()
+
 const store = useFormBuilderStore()
 
 function onInput(e: Event) {
   const t = e.target as HTMLInputElement
   if (typeof propFunction === 'function') {
     propFunction(t.value)
-  } else {
-    emit('update:modelValue', t.value)
   }
 }
 
@@ -42,6 +40,9 @@ function deleteField() {
   if (!item?.name) return
   store.removeItemByName(item.name)
   toast.success('Success', { description: 'Field has been deleted' })
+}
+function editFiled() {
+  store.setSelectedField({ label: 'Text Field', value: 'text' })
 }
 </script>
 
@@ -62,7 +63,9 @@ function deleteField() {
         type="text"
         @input="onInput"
       />
-      <Button size="icon" variant="secondary" class="h-8 w-8 text-blue-600"> ✎ </Button>
+      <Button size="icon" variant="secondary" class="h-8 w-8 text-blue-600" @click="editFiled">
+        ✎
+      </Button>
       <Button size="icon" variant="destructive" class="h-8 w-8" @click="deleteField"> − </Button>
     </div>
   </div>

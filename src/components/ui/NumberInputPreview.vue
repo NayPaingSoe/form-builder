@@ -61,7 +61,14 @@ function deleteField() {
         :step="item.value_constraints?.allow_decimal ? 'any' : 1"
         @input="onInput"
       />
-      <Button size="icon" variant="secondary" class="h-8 w-8 text-blue-600"> ✎ </Button>
+      <Button
+        size="icon"
+        variant="secondary"
+        class="h-8 w-8 text-blue-600"
+        @click="store.setSelectedField({ label: 'Number Field', value: 'number' })"
+      >
+        ✎
+      </Button>
       <Button size="icon" variant="destructive" class="h-8 w-8" @click="deleteField"> − </Button>
     </div>
   </div>

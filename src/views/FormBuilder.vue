@@ -8,7 +8,7 @@
           :key="i"
           variant="outline"
           class="w-full"
-          @click="selectedField = field"
+          @click="store.setSelectedField(field)"
         >
           {{ field.label }}
         </Button>
@@ -17,10 +17,10 @@
 
     <!-- Main Canvas -->
     <main class="col-span-2 flex-1">
-      <NoSelectedFormBuilder v-if="selectedField.value === ''" />
-      <TextFromBuilder v-if="selectedField.value === 'text'" />
-      <RadioFormBuilder v-if="selectedField.value === 'radio'" />
-      <NumberFormBuilder v-if="selectedField.value === 'number'" />
+      <NoSelectedFormBuilder v-if="store.selectedField.value === ''" />
+      <TextFromBuilder v-if="store.selectedField.value === 'text'" />
+      <RadioFormBuilder v-if="store.selectedField.value === 'radio'" />
+      <NumberFormBuilder v-if="store.selectedField.value === 'number'" />
     </main>
 
     <main class="col-span-2 flex-1">
@@ -30,13 +30,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
 import { Button } from '@/components/ui/button'
 import PreviewForm from '@/components/ui/PreviewForm.vue'
 import TextFromBuilder from '@/components/ui/TextFromBuilder.vue'
 import NoSelectedFormBuilder from '@/components/ui/NoSelectedFormBuilder.vue'
 import RadioFormBuilder from '@/components/ui/RadioFormBuilder.vue'
 import NumberFormBuilder from '@/components/ui/NumberFormBuilder.vue'
+import { useFormBuilderStore } from '@/stores/form_builder'
 
 const fields = [
   { label: 'Text Field', value: 'text' },
@@ -44,7 +44,7 @@ const fields = [
   { label: 'Radio Buttons', value: 'radio' },
 ]
 
-const selectedField = ref({ label: '', value: '' })
+const store = useFormBuilderStore()
 </script>
 
 <style scoped>

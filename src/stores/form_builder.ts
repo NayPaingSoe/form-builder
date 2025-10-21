@@ -4,6 +4,7 @@ import { defineStore } from 'pinia'
 export const useFormBuilderStore = defineStore('form_builder', () => {
   type ItemWithName = { name: string } & Record<string, unknown>
   const items = ref<ItemWithName[]>([])
+  const selectedField = ref<{ label: string; value: string }>({ label: '', value: '' })
 
   function addItem(value: ItemWithName) {
     items.value = [...items.value, value]
@@ -13,5 +14,9 @@ export const useFormBuilderStore = defineStore('form_builder', () => {
     items.value = items.value.filter((it) => it?.name !== name)
   }
 
-  return { items, addItem, removeItemByName }
+  function setSelectedField(payload: { label: string; value: string }) {
+    selectedField.value = payload
+  }
+
+  return { items, addItem, removeItemByName, selectedField, setSelectedField }
 })

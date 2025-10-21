@@ -8,9 +8,6 @@ import NumberInputPreview from '@/components/ui/NumberInputPreview.vue'
 import RadioInputPreview from '@/components/ui/RadioInputPreview.vue'
 import { VueDraggable } from 'vue-draggable-plus'
 
-const store = useFormBuilderStore()
-console.log(store.items)
-
 // Types for items in the builder store
 interface DisplayConf {
   label?: string
@@ -48,6 +45,8 @@ interface FormItem {
   enum?: EnumOption[]
 }
 
+const store = useFormBuilderStore()
+
 // Build reactive form data initialized from prefill values
 const formData = ref<Record<string, unknown>>({})
 
@@ -67,7 +66,7 @@ function initFormData(items: FormItem[]) {
   formData.value = initial
 }
 
-const items = computed<FormItem[]>(() => (store.items as FormItem[]) || [])
+const items = computed<FormItem[]>(() => (store.items as unknown as FormItem[]) || [])
 initFormData(items.value)
 
 // If items change after init, refresh the form data (simple strategy)
@@ -87,7 +86,11 @@ function isRequired(item: FormItem) {
       <VueDraggable v-model="store.items">
         <div v-for="it in items" :key="it.name" class="space-y-2">
           <!-- Text Field -->
-          <TextInputPreview v-if="it.type === 'Text'" :item="it" v-model="formData[it.name]" />
+          <TextInputPreview
+            v-if="it.type === 'Text'"
+            :item="it"
+            v-model="formData[it.name]"
+          />
 
           <!-- Number Field -->
           <NumberInputPreview

@@ -53,7 +53,14 @@ function deleteField() {
         <span class="text-sm">{{ opt.label }}</span>
       </label>
       <div class="flex gap-2">
-        <Button size="icon" variant="secondary" class="h-8 w-8 text-blue-600"> ✎ </Button>
+        <Button
+          size="icon"
+          variant="secondary"
+          class="h-8 w-8 text-blue-600"
+          @click="store.setSelectedField({ label: 'Radio Buttons', value: 'radio' })"
+        >
+          ✎
+        </Button>
         <Button size="icon" variant="destructive" class="h-8 w-8" @click="deleteField"> − </Button>
       </div>
     </div>
