@@ -6,7 +6,8 @@ import { useFormBuilderStore } from '@/stores/form_builder'
 import { toast } from 'vue-sonner'
 import type { TextFieldInputsT } from '@/lib/types'
 
-const { item, modelValue, propFunction } = defineProps<{
+const { item, modelValue, propFunction, type } = defineProps<{
+  type: 'renderer' | 'builder'
   item: TextFieldInputsT
   modelValue: unknown
   propFunction?: (v: string) => void
@@ -48,10 +49,12 @@ function editFiled() {
         type="text"
         @input="onInput"
       />
-      <Button size="icon" variant="secondary" class="h-8 w-8 text-blue-600" @click="editFiled">
-        ✎
-      </Button>
-      <Button size="icon" variant="destructive" class="h-8 w-8" @click="deleteField"> − </Button>
+      <template v-if="type === 'builder'">
+        <Button size="icon" variant="secondary" class="h-8 w-8 text-blue-600" @click="editFiled">
+          ✎
+        </Button>
+        <Button size="icon" variant="destructive" class="h-8 w-8" @click="deleteField"> − </Button>
+      </template>
     </div>
   </div>
 </template>

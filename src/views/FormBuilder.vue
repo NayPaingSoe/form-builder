@@ -1,5 +1,5 @@
 <template>
-  <div class="grid mt-12 grid-cols-5 gap-2 w-full h-screen text-gray-900">
+  <div class="grid mt-12 grid-cols-5 gap-2 w-full min-h-[80vh] text-gray-900">
     <!-- Left Sidebar -->
     <aside class="col-span-1 border-r bg-white p-4 flex flex-col rounded-sm">
       <div class="grid grid-cols-2 gap-2 overflow-y-auto">
@@ -23,13 +23,15 @@
       <NumberFormBuilder v-if="store.selectedField.value === 'number'" />
     </main>
 
-    <main class="col-span-2 flex-1">
+    <main class="col-span-2 flex-1 min-h-[80vh]">
       <PreviewForm />
     </main>
   </div>
 </template>
 
 <script setup lang="ts">
+import { Card, CardHeader, CardTitle } from '@/components/ui/card'
+
 import { Button } from '@/components/ui/button'
 import PreviewForm from '@/components/ui/PreviewForm.vue'
 import TextFormBuilder from '@/components/ui/TextFormBuilder.vue'

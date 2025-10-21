@@ -78,9 +78,9 @@ function isRequired(item: FormItem) {
 </script>
 
 <template>
-  <Card class="w-full flex flex-col rounded-sm justify-start p-6 min-h-[90vh]">
+  <Card class="w-full flex flex-col rounded-sm justify-start p-6 min-h-[90vh] min-w-xl">
     <CardHeader>
-      <CardTitle class="text-lg font-semibold pl-1">Preview Form</CardTitle>
+      <CardTitle class="text-lg font-semibold pl-1">Form Render</CardTitle>
     </CardHeader>
     <CardContent class="space-y-6 w-full">
       <VueDraggable v-model="store.items">
@@ -89,7 +89,7 @@ function isRequired(item: FormItem) {
           <TextInputPreview
             v-if="it.type === 'Text'"
             :item="it"
-            type="builder"
+            type="renderer"
             v-model="formData[it.name]"
           />
 

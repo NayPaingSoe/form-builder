@@ -224,14 +224,12 @@ watch(
     </CardContent>
 
     <!-- Footer -->
-    <CardFooter class="flex justify-between pt-4">
+    <CardFooter class="flex justify-center">
       <div class="flex gap-2">
-        <Button @click="onSubmit" class="bg-blue-600 text-white hover:bg-blue-700"> Save</Button>
+        <Button @click="onSubmit" class="bg-blue-600 text-white hover:bg-blue-700 px-10">
+          Add</Button
+        >
       </div>
     </CardFooter>
   </Card>
-  <pre>
-
-    {{ store }}
-  </pre>
 </template>
