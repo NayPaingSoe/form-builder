@@ -4,25 +4,25 @@ import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/componen
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 
-interface CheckboxOption {
+interface RadioOption {
   label: string
   checked: boolean
 }
 
-const label = ref('Check All That Apply')
+const label = ref('Select One')
 const helpText = ref('')
-const checkboxes = ref<CheckboxOption[]>([
+const radios = ref<RadioOption[]>([
   { label: 'First Choice', checked: true },
   { label: 'Second Choice', checked: false },
 ])
 
-function addCheckbox(index: number) {
-  checkboxes.value.splice(index + 1, 0, { label: `New Choice`, checked: false })
+function addRadio(index: number) {
+  radios.value.splice(index + 1, 0, { label: `New Choice`, checked: false })
 }
 
-function removeCheckbox(index: number) {
-  if (checkboxes.value.length > 1) {
-    checkboxes.value.splice(index, 1)
+function removeRadio(index: number) {
+  if (radios.value.length > 1) {
+    radios.value.splice(index, 1)
   }
 }
 
@@ -30,7 +30,7 @@ function saveField() {
   console.log({
     label: label.value,
     helpText: helpText.value,
-    checkboxes: checkboxes.value,
+    radios: radios.value,
   })
 }
 </script>
@@ -38,31 +38,31 @@ function saveField() {
 <template>
   <Card class="w-full flex flex-col rounded-sm justify-start p-6">
     <CardHeader>
-      <CardTitle class="text-lg font-semibold">Checkboxes</CardTitle>
+      <CardTitle class="text-lg font-semibold">Radio</CardTitle>
     </CardHeader>
 
     <CardContent class="space-y-4">
       <!-- Label -->
       <div class="pb-4">
         <label class="text-sm font-medium text-gray-700">Label</label>
-        <Input v-model="label" placeholder="Check All That Apply" />
+        <Input v-model="label" placeholder="Select One" />
       </div>
 
-      <!-- Checkboxes Section -->
+      <!-- Radio Options Section -->
       <div class="pb-4">
         <div class="flex items-center justify-between mb-2">
-          <label class="text-sm font-medium text-gray-700">Checkboxes</label>
+          <label class="text-sm font-medium text-gray-700">Radio Options</label>
           <div class="flex items-center gap-2 text-sm text-gray-600"></div>
         </div>
 
         <div class="space-y-2 border rounded-md px-2 pb-2">
-          <div v-for="(cb, index) in checkboxes" :key="index" class="flex items-center gap-2 pt-2">
-            <Input v-model="cb.label" class="flex-1" />
+          <div v-for="(rb, index) in radios" :key="index" class="flex items-center gap-2 pt-2">
+            <Input v-model="rb.label" class="flex-1" />
             <Button
               size="icon"
               variant="secondary"
               class="h-8 w-8 text-blue-600"
-              @click="addCheckbox(index)"
+              @click="addRadio(index)"
             >
               +
             </Button>
@@ -70,7 +70,7 @@ function saveField() {
               size="icon"
               variant="destructive"
               class="h-8 w-8"
-              @click="removeCheckbox(index)"
+              @click="removeRadio(index)"
             >
               −
             </Button>
