@@ -43,7 +43,7 @@ function saveField() {
         }
       : {}),
     ...(prefillVal !== undefined ? { prefill: { value: prefillVal } } : {}),
-    ...((visibleField.value?.trim() && visibleRule.value?.trim())
+    ...(visibleField.value?.trim() && visibleRule.value?.trim()
       ? { visible: { [visibleField.value.trim()]: visibleRule.value.trim() } }
       : {}),
     builder: { type: 'simple_input' },
@@ -59,10 +59,12 @@ function saveField() {
 </script>
 
 <template>
-  <Card class="w-full h-full flex flex-col items-center rounded-sm justify-start p-6">
-    <p class="text-lg font-bold">Number</p>
-
-    <CardContent class="space-y-4 w-90">
+  <!-- <Card class="w-full h-full flex flex-col items-center rounded-sm justify-start p-6"> -->
+  <Card class="w-full flex flex-col rounded-sm justify-start p-6">
+    <CardHeader>
+      <CardTitle class="text-lg font-semibold pl-6">Number</CardTitle>
+    </CardHeader>
+    <CardContent class="space-y-4 w-full">
       <div class="pb-4">
         <label class="text-sm font-medium text-gray-700">Name</label>
         <Input v-model="name" placeholder="unique_field_name" />
@@ -90,7 +92,7 @@ function saveField() {
 
       <div class="pb-4">
         <label class="text-sm font-medium text-gray-700">Maximum</label>
-        <Input v-model="maximum" type="number" min="1" placeholder="1000000" />
+        <Input v-model="maximum" type="number" min="1" placeholder="" />
       </div>
 
       <div class="pb-4 flex items-center gap-2">
@@ -100,7 +102,7 @@ function saveField() {
 
       <div class="pb-4">
         <label class="text-sm font-medium text-gray-700">Visible When Field</label>
-        <Input v-model="visibleField" placeholder="duration" />
+        <Input v-model="visibleField" placeholder="" />
       </div>
 
       <div class="pb-4">

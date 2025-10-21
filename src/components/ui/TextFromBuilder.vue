@@ -7,8 +7,8 @@ import { useFormBuilderStore } from '@/stores/form_builder'
 import { toast } from 'vue-sonner'
 
 const inputType = ref('Text')
-const name = ref('full_name')
-const label = ref('Text Field')
+const name = ref('')
+const label = ref('')
 const placeholder = ref('')
 const predefined = ref('')
 const required = ref(false)
@@ -46,10 +46,11 @@ function saveField() {
 </script>
 
 <template>
-  <Card class="w-full h-full flex flex-col items-center rounded-sm justify-start p-6">
-    <p class="text-lg font-bold">Text</p>
-
-    <CardContent class="space-y-4 w-90">
+  <Card class="w-full flex flex-col rounded-sm justify-start p-6">
+    <CardHeader>
+      <CardTitle class="text-lg font-semibold pl-6">Text</CardTitle>
+    </CardHeader>
+    <CardContent class="space-y-4 w-full">
       <div class="pb-4">
         <label class="text-sm font-medium text-gray-700">Name</label>
         <Input v-model="name" placeholder="unique_field_name" />

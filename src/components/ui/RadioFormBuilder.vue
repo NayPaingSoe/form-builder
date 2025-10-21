@@ -3,35 +3,46 @@ import { ref } from 'vue'
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { useFormBuilderStore } from '@/stores/form_builder'
+import { toast } from 'vue-sonner'
 
 interface RadioOption {
   label: string
-  checked: boolean
+  value: string
 }
 
-const label = ref('Select One')
-const helpText = ref('')
-const radios = ref<RadioOption[]>([
-  { label: 'First Choice', checked: true },
-  { label: 'Second Choice', checked: false },
-])
+const inputType = ref('Radio')
+const name = ref('')
+const label = ref('')
+const placeholder = ref('')
+const options = ref<RadioOption[]>([{ label: 'First Choice', value: 'first_choice' }])
+const layout = ref<'Normal' | 'Compact'>('Normal')
+
+const store = useFormBuilderStore()
 
 function addRadio(index: number) {
-  radios.value.splice(index + 1, 0, { label: `New Choice`, checked: false })
+  options.value.splice(index + 1, 0, { label: 'New Choice', value: 'new_value' })
 }
 
 function removeRadio(index: number) {
-  if (radios.value.length > 1) {
-    radios.value.splice(index, 1)
+  if (options.value.length > 1) {
+    options.value.splice(index, 1)
   }
 }
 
 function saveField() {
-  console.log({
-    label: label.value,
-    helpText: helpText.value,
-    radios: radios.value,
-  })
+  const key = name.value || 'field'
+  const item = {
+    name: key,
+    display: { label: label.value, placeholder: placeholder.value },
+    enum: options.value.map((o) => ({ label: o.label, value: o.value })),
+    builder: { type: 'simple_choice' },
+    layout: layout.value,
+    type: inputType.value,
+  }
+  store.addItem(item)
+  toast.success('Success', { description: 'Radio Field has been created' })
+  console.log(store.items)
 }
 </script>
 
@@ -42,10 +53,22 @@ function saveField() {
     </CardHeader>
 
     <CardContent class="space-y-4">
+      <!-- Name -->
+      <div class="pb-4">
+        <label class="text-sm font-medium text-gray-700">Name</label>
+        <Input v-model="name" placeholder="" />
+      </div>
+
       <!-- Label -->
       <div class="pb-4">
         <label class="text-sm font-medium text-gray-700">Label</label>
-        <Input v-model="label" placeholder="Select One" />
+        <Input v-model="label" placeholder="" />
+      </div>
+
+      <!-- Placeholder -->
+      <div class="pb-4">
+        <label class="text-sm font-medium text-gray-700">Placeholder</label>
+        <Input v-model="placeholder" placeholder="" />
       </div>
 
       <!-- Radio Options Section -->
@@ -56,37 +79,37 @@ function saveField() {
         </div>
 
         <div class="space-y-2 border rounded-md px-2 pb-2">
-          <div v-for="(rb, index) in radios" :key="index" class="flex items-center gap-2 pt-2">
-            <Input v-model="rb.label" class="flex-1" />
-            <Button
-              size="icon"
-              variant="secondary"
-              class="h-8 w-8 text-blue-600"
-              @click="addRadio(index)"
-            >
-              +
-            </Button>
-            <Button
-              size="icon"
-              variant="destructive"
-              class="h-8 w-8"
-              @click="removeRadio(index)"
-            >
-              −
-            </Button>
+          <div
+            v-for="(opt, index) in options"
+            :key="index"
+            class="grid grid-cols-2 gap-2 pt-2 items-center"
+          >
+            <Input v-model="opt.label" class="w-full" placeholder="" />
+            <div class="flex items-center gap-2">
+              <Input v-model="opt.value" class="w-full" placeholder="" />
+              <Button
+                size="icon"
+                variant="secondary"
+                class="h-8 w-8 text-blue-600"
+                @click="addRadio(index)"
+              >
+                +
+              </Button>
+              <Button size="icon" variant="destructive" class="h-8 w-8" @click="removeRadio(index)">
+                −
+              </Button>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Help Text -->
-      <div>
-        <label class="text-sm font-medium text-gray-700">Help Text</label>
-        <textarea
-          v-model="helpText"
-          class="w-full border rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          rows="3"
-          placeholder="Enter help text..."
-        ></textarea>
+      <!-- Layout -->
+      <div class="pb-4">
+        <label class="text-sm font-medium text-gray-700">Layout</label>
+        <select v-model="layout" class="border rounded px-3 py-2 text-sm w-full">
+          <option value="Normal">Normal</option>
+          <option value="Compact">Compact</option>
+        </select>
       </div>
     </CardContent>
 
@@ -97,4 +120,8 @@ function saveField() {
       </div>
     </CardFooter>
   </Card>
+  <pre>
+
+    {{ store }}
+  </pre>
 </template>
