@@ -1,43 +1,46 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useFormBuilderStore } from '@/stores/form_builder'
 import { toast } from 'vue-sonner'
-import { _ } from 'node_modules/tailwindcss/dist/colors-b_6i0Oi7'
 
-const inputType = ref('Text')
-const name = ref('')
-const label = ref('')
-const placeholder = ref('')
-const predefined = ref('')
-const required = ref(false)
-const maxlength = ref<string>('280')
-const layout = ref<'Normal' | 'Compact'>('Normal')
+interface TextFieldItem {
+  name: string
+  display: { label?: string; placeholder?: string }
+  rule?: string
+  props: { maxlength?: number }
+  prefill: { value?: string }
+  builder: { type: string }
+  layout: 'Normal' | 'Compact'
+  type: 'Text'
+}
+
+const textInputFields = ref<TextFieldItem>({
+  name: '',
+  display: {
+    label: '',
+    placeholder: '',
+  },
+  props: {
+    maxlength: 40,
+  },
+  prefill: {
+    value: '',
+  },
+  builder: {
+    type: 'simple_input',
+  },
+  layout: 'Normal',
+  type: 'Text',
+})
 
 const store = useFormBuilderStore()
 
 function saveField() {
-  const key = name.value || 'field'
-  const maxLenNum = maxlength.value ? Number(maxlength.value) : undefined
-  const prefillVal = predefined.value
-    ? isNaN(Number(predefined.value))
-      ? predefined.value
-      : Number(predefined.value)
-    : undefined
-  const item = {
-    name: key,
-    display: { label: label.value, placeholder: placeholder.value },
-    ...(required.value ? { rule: 'required' } : {}),
-    props: {
-      ...(maxLenNum ? { maxlength: maxLenNum } : {}),
-    },
-    ...(prefillVal !== undefined ? { prefill: { value: prefillVal } } : {}),
-    builder: { type: 'simple_input' },
-    layout: layout.value,
-    type: inputType.value,
-  }
+  const key = textInputFields.value.name || 'field'
+  const item = { ...textInputFields.value, name: key }
   store.addItem(item)
   toast.success('Success', {
     description: 'Text Field has been created',
@@ -46,15 +49,25 @@ function saveField() {
   resetFormInputs()
   console.log(store.items)
 }
+
+const requiredBool = computed({
+  get: () => textInputFields.value.rule === 'required',
+  set: (v: boolean) => {
+    if (v) textInputFields.value.rule = 'required'
+    else delete textInputFields.value.rule
+  },
+})
+
 function resetFormInputs() {
-  name.value = ''
-  label.value = ''
-  placeholder.value = ''
-  predefined.value = ''
-  required.value = false
-  maxlength.value = '280'
-  layout.value = 'Normal'
-  inputType.value = 'Text'
+  textInputFields.value = {
+    name: '',
+    display: { label: '', placeholder: '' },
+    props: { maxlength: 280 },
+    prefill: { value: '' },
+    builder: { type: 'simple_input' },
+    layout: 'Normal',
+    type: 'Text',
+  }
 }
 </script>
 
@@ -66,37 +79,42 @@ function resetFormInputs() {
     <CardContent class="space-y-4 w-full">
       <div class="pb-4">
         <label class="text-sm font-medium text-gray-700">Name</label>
-        <Input v-model="name" placeholder="unique_field_name" />
+        <Input v-model="textInputFields.name" placeholder="unique_field_name" />
       </div>
 
       <div class="pb-4">
         <label class="text-sm font-medium text-gray-700">Label</label>
-        <Input v-model="label" placeholder="" />
+        <Input v-model="textInputFields.display.label" placeholder="" />
       </div>
 
       <div class="pb-4">
         <label class="text-sm font-medium text-gray-700">Placeholder</label>
-        <Input v-model="placeholder" placeholder="" />
+        <Input v-model="textInputFields.display.placeholder" placeholder="" />
       </div>
 
       <div class="pb-4">
         <label class="text-sm font-medium text-gray-700">Predefined Value</label>
-        <Input v-model="predefined" placeholder="" />
+        <Input v-model="textInputFields.prefill.value" placeholder="" />
       </div>
 
       <div class="pb-4 flex items-center gap-2">
-        <input id="required" type="checkbox" v-model="required" />
+        <input id="required" type="checkbox" v-model="requiredBool" />
         <label for="required" class="text-sm font-medium text-gray-700">Required</label>
       </div>
 
       <div class="pb-4">
         <label class="text-sm font-medium text-gray-700">Max Length</label>
-        <Input v-model="maxlength" type="number" min="1" placeholder="280" />
+        <Input
+          v-model.number="textInputFields.props.maxlength"
+          type="number"
+          min="1"
+          placeholder="280"
+        />
       </div>
 
       <div class="pb-4">
         <label class="text-sm font-medium text-gray-700">Layout</label>
-        <select v-model="layout" class="border rounded px-3 py-2 text-sm w-full">
+        <select v-model="textInputFields.layout" class="border rounded px-3 py-2 text-sm w-full">
           <option value="Normal">Normal</option>
           <option value="Compact">Compact</option>
         </select>
