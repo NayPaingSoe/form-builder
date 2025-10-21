@@ -6,6 +6,9 @@ import { Button } from '@/components/ui/button'
 import { useFormBuilderStore } from '@/stores/form_builder'
 import { toast } from 'vue-sonner'
 import type { RadioFieldInputsT } from '@/lib/types'
+import * as yup from 'yup'
+import { useForm } from 'vee-validate'
+import { toTypedSchema } from '@vee-validate/yup'
 
 interface RadioOption {
   label: string
@@ -35,18 +38,42 @@ function removeRadio(index: number) {
   }
 }
 
-function saveField() {
-  const targetName =
-    store.isEditingText && store.editingItemName
-      ? store.editingItemName
-      : radioInputFields.value.name || 'field'
+const radioSchema = yup
+  .object({
+    name: yup.string().trim().required('Name is required'),
+    display: yup.object({
+      label: yup.string().trim().required('Label is required'),
+      placeholder: yup.string().optional(),
+    }),
+    rule: yup.string().optional(),
+    builder: yup.object({ type: yup.string().required() }),
+    layout: yup.mixed<'Normal' | 'Compact'>().oneOf(['Normal', 'Compact']).required(),
+    type: yup.string().oneOf(['Radio']).required(),
+  }) as yup.ObjectSchema<Required<Omit<RadioFieldInputsT, 'enum'>>>
+
+const { errors, handleSubmit, defineField, setValues, resetForm } = useForm<
+  Required<Omit<RadioFieldInputsT, 'enum'>>
+>({
+  validationSchema: toTypedSchema(radioSchema),
+  initialValues: radioInputFields.value as Required<Omit<RadioFieldInputsT, 'enum'>>,
+})
+
+const [fName] = defineField('name')
+const [fLabel] = defineField('display.label')
+const [fPlaceholder] = defineField('display.placeholder')
+const [fLayout] = defineField('layout')
+const [fRule] = defineField('rule')
+
+const onSubmit = handleSubmit((values) => {
+  if (!options.value.length || options.value.some((o) => !o.label || !o.value)) {
+    toast.error('Invalid options', { description: 'Add at least one option with label and value' })
+    return
+  }
+  const targetName = store.isEditingText && store.editingItemName ? store.editingItemName : values.name || 'field'
   const updated: RadioFieldInputsT = {
-    ...radioInputFields.value,
+    ...(values as RadioFieldInputsT),
     name: targetName,
-    enum: options.value.map((o) => ({
-      label: o.label,
-      value: o.value,
-    })) as unknown as RadioFieldInputsT['enum'],
+    enum: options.value.map((o) => ({ label: o.label, value: o.value })) as unknown as RadioFieldInputsT['enum'],
   }
 
   const idx = store.items.findIndex((it) => it.name === targetName)
@@ -62,25 +89,25 @@ function saveField() {
     resetFormInputs()
   }
   console.log(store.items)
-}
+})
 
 function resetFormInputs() {
-  radioInputFields.value = {
-    name: '',
-    display: { label: '', placeholder: '' },
-    enum: [] as unknown as RadioFieldInputsT['enum'],
-    builder: { type: 'simple_choice' },
-    layout: 'Normal',
-    type: 'Radio',
-  }
+  resetForm({
+    values: {
+      name: '',
+      display: { label: '', placeholder: '' },
+      builder: { type: 'simple_choice' },
+      layout: 'Normal',
+      type: 'Radio',
+    } as Required<Omit<RadioFieldInputsT, 'enum'>>,
+  })
   options.value = [{ label: 'First Choice', value: 'first_choice' }]
 }
 
 const requiredBool = computed({
-  get: () => radioInputFields.value.rule === 'required',
+  get: () => (fRule.value as string | undefined) === 'required',
   set: (v: boolean) => {
-    if (v) radioInputFields.value.rule = 'required'
-    else delete radioInputFields.value.rule
+    ;(fRule.value as string | undefined) = v ? 'required' : undefined
   },
 })
 
@@ -90,17 +117,16 @@ watch(
   (editing) => {
     if (editing && store.editTextDraft) {
       const { name, display, enum: dEnum, builder, layout, rule } = store.editTextDraft
-      radioInputFields.value = {
-        name,
-        display: { label: display?.label, placeholder: display?.placeholder },
+      setValues({
+        name: name || '',
+        display: { label: display?.label || '', placeholder: display?.placeholder || '' },
         rule,
-        enum: dEnum,
         builder: { type: builder?.type || 'simple_choice' },
-        layout,
+        layout: (layout as 'Normal' | 'Compact') || 'Normal',
         type: 'Radio',
-      }
+      } as Required<Omit<RadioFieldInputsT, 'enum'>>)
       // map enum to options list for editing UI
-      options.value = dEnum?.map((o) => ({ label: o.label || '', value: o.value || '' })) || []
+      options.value = (dEnum?.map((o) => ({ label: o.label || '', value: o.value || '' })) || []) as RadioOption[]
     }
   },
 )
@@ -116,19 +142,26 @@ watch(
       <!-- Name -->
       <div class="pb-4">
         <label class="text-sm font-medium text-gray-700">Name</label>
-        <Input v-model="radioInputFields.name" placeholder="" />
+        <Input v-model="fName" placeholder="" />
+        <span v-if="errors.name" class="text-xs text-red-600 mt-1 block">{{ errors.name }}</span>
       </div>
 
       <!-- Label -->
       <div class="pb-4">
         <label class="text-sm font-medium text-gray-700">Label</label>
-        <Input v-model="radioInputFields.display.label" placeholder="" />
+        <Input v-model="fLabel" placeholder="" />
+        <span v-if="errors['display.label']" class="text-xs text-red-600 mt-1 block">
+          {{ errors['display.label'] }}
+        </span>
       </div>
 
       <!-- Placeholder -->
       <div class="pb-4">
         <label class="text-sm font-medium text-gray-700">Placeholder</label>
-        <Input v-model="radioInputFields.display.placeholder" placeholder="" />
+        <Input v-model="fPlaceholder" placeholder="" />
+        <span v-if="errors['display.placeholder']" class="text-xs text-red-600 mt-1 block">
+          {{ errors['display.placeholder'] }}
+        </span>
       </div>
 
       <!-- Required -->
@@ -172,17 +205,18 @@ watch(
       <!-- Layout -->
       <div class="pb-4">
         <label class="text-sm font-medium text-gray-700">Layout</label>
-        <select v-model="radioInputFields.layout" class="border rounded px-3 py-2 text-sm w-full">
+        <select v-model="fLayout" class="border rounded px-3 py-2 text-sm w-full">
           <option value="Normal">Normal</option>
           <option value="Compact">Compact</option>
         </select>
+        <span v-if="errors.layout" class="text-xs text-red-600 mt-1 block">{{ errors.layout }}</span>
       </div>
     </CardContent>
 
     <!-- Footer -->
     <CardFooter class="flex justify-between pt-4">
       <div class="flex gap-2">
-        <Button @click="saveField" class="bg-blue-600 text-white hover:bg-blue-700"> Save</Button>
+        <Button @click="onSubmit" class="bg-blue-600 text-white hover:bg-blue-700"> Save</Button>
       </div>
     </CardFooter>
   </Card>
