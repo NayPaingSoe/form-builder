@@ -1,12 +1,38 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
-export const useFormBuilderStore = defineStore('form_builder', () => {
-  type ItemWithName = { name: string } & Record<string, unknown>
-  const items = ref<ItemWithName[]>([])
-  const selectedField = ref<{ label: string; value: string }>({ label: '', value: '' })
+interface inputsFieldsT {
+  name: string
+  display?: { label?: string; placeholder?: string }
+  rule?: string
+  enum?: [
+    {
+      label: string
+      value: string
+    }[],
+  ]
+  value_constraints?: {
+    maximum: number
+    allow_decimal: number
+  }
+  props?: { maxlength?: number }
+  prefill?: { value?: string | number | '' }
+  builder: { type: string }
+  visible?: {
+    duration: string
+  }
+  layout: 'Normal' | 'Compact'
+  type: string
+}
 
-  function addItem(value: ItemWithName) {
+export const useFormBuilderStore = defineStore('form_builder', () => {
+  const items = ref<inputsFieldsT[]>([])
+  const selectedField = ref<{ label: string; value: string }>({ label: '', value: '' })
+  const isEditingText = ref(false)
+  const editingItemName = ref<string | null>(null)
+  const editTextDraft = ref<inputsFieldsT | null>(null)
+
+  function addItem(value: inputsFieldsT) {
     items.value = [...items.value, value]
   }
 
@@ -18,5 +44,37 @@ export const useFormBuilderStore = defineStore('form_builder', () => {
     selectedField.value = payload
   }
 
-  return { items, addItem, removeItemByName, selectedField, setSelectedField }
+  function startEditText(item: inputsFieldsT) {
+    isEditingText.value = true
+    editingItemName.value = item.name
+    // make a shallow copy for draft editing
+    editTextDraft.value = { ...item }
+  }
+
+  function applyEditText(updated: inputsFieldsT) {
+    if (!isEditingText.value || !editingItemName.value) return
+    items.value = items.value.map((it) => (it.name === editingItemName.value ? updated : it))
+    cancelEditText()
+  }
+
+  function cancelEditText() {
+    isEditingText.value = false
+    editingItemName.value = null
+    editTextDraft.value = null
+  }
+
+  return {
+    items,
+    addItem,
+    removeItemByName,
+    selectedField,
+    setSelectedField,
+    // editing state/actions
+    isEditingText,
+    editingItemName,
+    editTextDraft,
+    startEditText,
+    applyEditText,
+    cancelEditText,
+  }
 })

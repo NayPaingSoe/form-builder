@@ -42,6 +42,7 @@ function deleteField() {
   toast.success('Success', { description: 'Field has been deleted' })
 }
 function editFiled() {
+  store.startEditText(item as unknown as { name: string } & Record<string, unknown>)
   store.setSelectedField({ label: 'Text Field', value: 'text' })
 }
 </script>

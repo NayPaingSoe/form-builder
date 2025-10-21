@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -11,7 +11,7 @@ interface TextFieldItem {
   display: { label?: string; placeholder?: string }
   rule?: string
   props: { maxlength?: number }
-  prefill: { value?: string }
+  prefill: { value?: string | '' }
   builder: { type: string }
   layout: 'Normal' | 'Compact'
   type: 'Text'
@@ -39,14 +39,27 @@ const textInputFields = ref<TextFieldItem>({
 const store = useFormBuilderStore()
 
 function saveField() {
-  const key = textInputFields.value.name || 'field'
-  const item = { ...textInputFields.value, name: key }
-  store.addItem(item)
-  toast.success('Success', {
-    description: 'Text Field has been created',
-  })
-  // reset form fields
-  resetFormInputs()
+  const targetName =
+    store.isEditingText && store.editingItemName
+      ? store.editingItemName
+      : textInputFields.value.name || 'field'
+  const updated = { ...textInputFields.value, name: targetName }
+
+  const idx = store.items.findIndex((it) => it.name === targetName)
+  if (idx !== -1) {
+    // Update existing
+    const next = [...store.items]
+    next[idx] = updated
+    // Directly assign to keep reactivity
+    store.items = next
+    toast.success('Success', { description: 'Text Field has been updated' })
+    if (store.isEditingText) store.cancelEditText()
+  } else {
+    // Create new
+    store.addItem(updated)
+    toast.success('Success', { description: 'Text Field has been created' })
+    resetFormInputs()
+  }
   console.log(store.items)
 }
 
@@ -69,6 +82,30 @@ function resetFormInputs() {
     type: 'Text',
   }
 }
+
+// When entering edit mode, load the draft into the form
+watch(
+  () => store.isEditingText,
+  (editing) => {
+    if (editing && store.editTextDraft) {
+      const { display, props, prefill, builder, layout } = store.editTextDraft
+      const name = store.editTextDraft?.name || ''
+      textInputFields.value = {
+        name,
+        display: {
+          label: display?.label || '',
+          placeholder: display?.placeholder || '',
+        },
+        ...(store.editTextDraft?.rule ? { rule: store.editTextDraft.rule } : {}),
+        props: { maxlength: props?.maxlength || 280 },
+        prefill: { value: prefill?.value || '' },
+        builder: { type: builder?.type || 'simple_input' },
+        layout: layout === 'Compact' ? 'Compact' : 'Normal',
+        type: 'Text',
+      }
+    }
+  },
+)
 </script>
 
 <template>
