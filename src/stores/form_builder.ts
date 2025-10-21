@@ -2,11 +2,16 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
 export const useFormBuilderStore = defineStore('form_builder', () => {
-  const items = ref<unknown[]>([])
+  type ItemWithName = { name: string } & Record<string, unknown>
+  const items = ref<ItemWithName[]>([])
 
-  function addItem(value: unknown) {
+  function addItem(value: ItemWithName) {
     items.value = [...items.value, value]
   }
 
-  return { items, addItem }
+  function removeItemByName(name: string) {
+    items.value = items.value.filter((it) => it?.name !== name)
+  }
+
+  return { items, addItem, removeItemByName }
 })

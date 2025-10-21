@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { Input } from '@/components/ui/input'
-import Button from './button/Button.vue'
+import { Button } from '@/components/ui/button'
+
+import { useFormBuilderStore } from '@/stores/form_builder'
+import { toast } from 'vue-sonner'
 
 // Keep types permissive to avoid parent-child TS narrowing issues
 interface DisplayConf {
@@ -24,6 +27,7 @@ const { item, modelValue, propFunction } = defineProps<{
   propFunction?: (v: string) => void
 }>()
 const emit = defineEmits<{ (e: 'update:modelValue', v: string): void }>()
+const store = useFormBuilderStore()
 
 function onInput(e: Event) {
   const t = e.target as HTMLInputElement
@@ -35,7 +39,9 @@ function onInput(e: Event) {
 }
 
 function deleteField() {
-  // delete field from store searh by name
+  if (!item?.name) return
+  store.removeItemByName(item.name)
+  toast.success('Success', { description: 'Field has been deleted' })
 }
 </script>
 
