@@ -18,7 +18,7 @@
     <!-- Main Canvas -->
     <main class="col-span-2 flex-1">
       <NoSelectedFormBuilder v-if="store.selectedField.value === ''" />
-      <TextFromBuilder v-if="store.selectedField.value === 'text'" />
+      <TextFormBuilder v-if="store.selectedField.value === 'text'" />
       <RadioFormBuilder v-if="store.selectedField.value === 'radio'" />
       <NumberFormBuilder v-if="store.selectedField.value === 'number'" />
     </main>
@@ -32,7 +32,7 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button'
 import PreviewForm from '@/components/ui/PreviewForm.vue'
-import TextFromBuilder from '@/components/ui/TextFromBuilder.vue'
+import TextFormBuilder from '@/components/ui/TextFormBuilder.vue'
 import NoSelectedFormBuilder from '@/components/ui/NoSelectedFormBuilder.vue'
 import RadioFormBuilder from '@/components/ui/RadioFormBuilder.vue'
 import NumberFormBuilder from '@/components/ui/NumberFormBuilder.vue'
