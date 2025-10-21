@@ -1,23 +1,13 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { Card, CardContent, CardFooter } from '@/components/ui/card'
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useFormBuilderStore } from '@/stores/form_builder'
 import { toast } from 'vue-sonner'
+import type { TextFieldInputsT } from '@/lib/types'
 
-interface TextFieldItem {
-  name: string
-  display: { label?: string; placeholder?: string }
-  rule?: string
-  props: { maxlength?: number }
-  prefill: { value?: string | '' }
-  builder: { type: string }
-  layout: 'Normal' | 'Compact'
-  type: 'Text'
-}
-
-const textInputFields = ref<TextFieldItem>({
+const textInputFields = ref<TextFieldInputsT>({
   name: '',
   display: {
     label: '',
@@ -111,7 +101,7 @@ watch(
 <template>
   <Card class="w-full flex flex-col rounded-sm justify-start p-6">
     <CardHeader>
-      <CardTitle class="text-lg font-semibold pl-6">Text</CardTitle>
+      <CardTitle class="text-lg font-semibold">Text</CardTitle>
     </CardHeader>
     <CardContent class="space-y-4 w-full">
       <div class="pb-4">

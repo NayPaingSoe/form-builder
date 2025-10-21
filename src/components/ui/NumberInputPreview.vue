@@ -3,24 +3,9 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useFormBuilderStore } from '@/stores/form_builder'
 import { toast } from 'vue-sonner'
+import type { NumberFieldInputsT } from '@/lib/types'
 
-interface DisplayConf {
-  label?: string
-  placeholder?: string
-}
-interface NumberConstraints {
-  maximum?: number
-  allow_decimal?: number
-}
-type AnyItem = {
-  name: string
-  display?: DisplayConf
-  rule?: string
-  value_constraints?: NumberConstraints
-  type?: string
-}
-
-const { item, modelValue } = defineProps<{ item: AnyItem; modelValue: unknown }>()
+const { item, modelValue } = defineProps<{ item: NumberFieldInputsT; modelValue: unknown }>()
 const emit = defineEmits<{ (e: 'update:modelValue', v: number | undefined): void }>()
 const store = useFormBuilderStore()
 
@@ -34,6 +19,11 @@ function deleteField() {
   if (!item?.name) return
   store.removeItemByName(item.name)
   toast.success('Success', { description: 'Field has been deleted' })
+}
+
+function editField() {
+  store.startEditText(item)
+  store.setSelectedField({ label: 'Number Field', value: 'number' })
 }
 </script>
 
@@ -65,7 +55,7 @@ function deleteField() {
         size="icon"
         variant="secondary"
         class="h-8 w-8 text-blue-600"
-        @click="store.setSelectedField({ label: 'Number Field', value: 'number' })"
+        @click="editField"
       >
         ✎
       </Button>

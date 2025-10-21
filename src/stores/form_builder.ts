@@ -1,29 +1,6 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-
-interface inputsFieldsT {
-  name: string
-  display?: { label?: string; placeholder?: string }
-  rule?: string
-  enum?: [
-    {
-      label: string
-      value: string
-    }[],
-  ]
-  value_constraints?: {
-    maximum: number
-    allow_decimal: number
-  }
-  props?: { maxlength?: number }
-  prefill?: { value?: string | number | '' }
-  builder: { type: string }
-  visible?: {
-    duration: string
-  }
-  layout: 'Normal' | 'Compact'
-  type: string
-}
+import type { inputsFieldsT } from '@/lib/types'
 
 export const useFormBuilderStore = defineStore('form_builder', () => {
   const items = ref<inputsFieldsT[]>([])

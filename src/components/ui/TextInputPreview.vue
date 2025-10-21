@@ -4,25 +4,10 @@ import { Button } from '@/components/ui/button'
 
 import { useFormBuilderStore } from '@/stores/form_builder'
 import { toast } from 'vue-sonner'
-
-// Keep types permissive to avoid parent-child TS narrowing issues
-interface DisplayConf {
-  label?: string
-  placeholder?: string
-}
-interface PropsConf {
-  maxlength?: number
-}
-type AnyItem = {
-  name: string
-  display?: DisplayConf
-  rule?: string
-  props?: PropsConf
-  type?: string
-}
+import type { TextFieldInputsT } from '@/lib/types'
 
 const { item, modelValue, propFunction } = defineProps<{
-  item: AnyItem
+  item: TextFieldInputsT
   modelValue: unknown
   propFunction?: (v: string) => void
 }>()
@@ -42,7 +27,7 @@ function deleteField() {
   toast.success('Success', { description: 'Field has been deleted' })
 }
 function editFiled() {
-  store.startEditText(item as unknown as { name: string } & Record<string, unknown>)
+  store.startEditText(item)
   store.setSelectedField({ label: 'Text Field', value: 'text' })
 }
 </script>
@@ -51,8 +36,7 @@ function editFiled() {
   <div class="pb-4">
     <div class="pb-1">
       <label class="text-sm font-medium">
-        {{ item.display?.label
-        }}<span v-if="item.rule === 'required'" class="text-red-600"> *</span>
+        {{ item.display.label }}<span v-if="item.rule === 'required'" class="text-red-600"> *</span>
       </label>
     </div>
     <div class="flex gap-2">
