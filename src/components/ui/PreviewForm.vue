@@ -6,6 +6,7 @@ import { useFormBuilderStore } from '@/stores/form_builder'
 import TextInputPreview from '@/components/ui/TextInputPreview.vue'
 import NumberInputPreview from '@/components/ui/NumberInputPreview.vue'
 import RadioInputPreview from '@/components/ui/RadioInputPreview.vue'
+import { VueDraggable } from 'vue-draggable-plus'
 
 const store = useFormBuilderStore()
 console.log(store.items)
@@ -83,27 +84,29 @@ function isRequired(item: FormItem) {
       <CardTitle class="text-lg font-semibold pl-1">Preview Form</CardTitle>
     </CardHeader>
     <CardContent class="space-y-6 w-full">
-      <div v-for="it in items" :key="it.name" class="space-y-2">
-        <!-- Text Field -->
-        <TextInputPreview v-if="it.type === 'Text'" :item="it" v-model="formData[it.name]" />
+      <VueDraggable v-model="store.items">
+        <div v-for="it in items" :key="it.name" class="space-y-2">
+          <!-- Text Field -->
+          <TextInputPreview v-if="it.type === 'Text'" :item="it" v-model="formData[it.name]" />
 
-        <!-- Number Field -->
-        <NumberInputPreview
-          v-else-if="it.type === 'Number' && it.builder?.type === 'simple_input'"
-          :item="it"
-          v-model="formData[it.name]"
-        />
+          <!-- Number Field -->
+          <NumberInputPreview
+            v-else-if="it.type === 'Number' && it.builder?.type === 'simple_input'"
+            :item="it"
+            v-model="formData[it.name]"
+          />
 
-        <!-- Radio Field -->
-        <RadioInputPreview
-          v-else-if="it.type === 'Radio' && it.builder?.type === 'simple_choice'"
-          :item="it"
-          v-model="formData[it.name]"
-        />
+          <!-- Radio Field -->
+          <RadioInputPreview
+            v-else-if="it.type === 'Radio' && it.builder?.type === 'simple_choice'"
+            :item="it"
+            v-model="formData[it.name]"
+          />
 
-        <!-- Fallback display -->
-        <div v-else class="text-xs text-gray-500">Unsupported field type: {{ it.type }}</div>
-      </div>
+          <!-- Fallback display -->
+          <div v-else class="text-xs text-gray-500">Unsupported field type: {{ it.type }}</div>
+        </div>
+      </VueDraggable>
     </CardContent>
 
     <CardFooter class="flex justify-between pt-4">
