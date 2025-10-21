@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useFormBuilderStore } from '@/stores/form_builder'
+import TextInputPreview from '@/components/ui/TextInputPreview.vue'
+import NumberInputPreview from '@/components/ui/NumberInputPreview.vue'
+import RadioInputPreview from '@/components/ui/RadioInputPreview.vue'
 
 const store = useFormBuilderStore()
 console.log(store.items)
@@ -73,77 +75,31 @@ watch(items, (nv) => initFormData(nv), { deep: true })
 function isRequired(item: FormItem) {
   return item?.rule === 'required'
 }
-
-// Very simple visibility engine supporting rules like "required|is:full"
-function isVisible(item: FormItem) {
-  const vis = item?.visible
-  if (!vis) return true
-  const entries = Object.entries(vis)
-  return entries.every(([dep, rule]) => {
-    const val = formData.value[dep]
-    if (typeof rule !== 'string') return true
-    const isIdx = rule.indexOf('is:')
-    if (isIdx >= 0) {
-      const expected = rule.slice(isIdx + 3)
-      return String(val) === expected
-    }
-    return true
-  })
-}
 </script>
 
 <template>
   <Card class="w-full flex flex-col rounded-sm justify-start p-6">
     <CardHeader>
-      <CardTitle class="text-lg font-semibold pl-6">Preview Form</CardTitle>
+      <CardTitle class="text-lg font-semibold pl-1">Preview Form</CardTitle>
     </CardHeader>
     <CardContent class="space-y-6 w-full">
-      <div v-for="it in items" :key="it.name" v-show="isVisible(it)" class="space-y-2">
-        <div class="pb-1">
-          <label class="text-sm font-medium text-gray-700">
-            {{ it.display?.label }}<span v-if="isRequired(it)" class="text-red-600"> *</span>
-          </label>
-        </div>
-
+      <div v-for="it in items" :key="it.name" class="space-y-2">
         <!-- Text Field -->
-        <div v-if="it.type === 'Text'">
-          <Input
-            v-model="formData[it.name]"
-            :placeholder="it.display?.placeholder"
-            :maxlength="it.props?.maxlength"
-            :required="isRequired(it)"
-            type="text"
-          />
-        </div>
+        <TextInputPreview v-if="it.type === 'Text'" :item="it" v-model="formData[it.name]" />
 
         <!-- Number Field -->
-        <div v-else-if="it.type === 'Number' && it.builder?.type === 'simple_input'">
-          <Input
-            v-model.number="formData[it.name]"
-            :placeholder="it.display?.placeholder"
-            :required="isRequired(it)"
-            type="number"
-            :max="it.value_constraints?.maximum"
-            :step="it.value_constraints?.allow_decimal ? 'any' : 1"
-          />
-        </div>
+        <NumberInputPreview
+          v-else-if="it.type === 'Number' && it.builder?.type === 'simple_input'"
+          :item="it"
+          v-model="formData[it.name]"
+        />
 
         <!-- Radio Field -->
-        <div
+        <RadioInputPreview
           v-else-if="it.type === 'Radio' && it.builder?.type === 'simple_choice'"
-          class="space-y-2"
-        >
-          <div class="flex flex-col gap-2">
-            <label
-              v-for="opt in it.enum"
-              :key="it.name + '_' + opt.value"
-              class="inline-flex items-center gap-2"
-            >
-              <input type="radio" :name="it.name" :value="opt.value" v-model="formData[it.name]" />
-              <span class="text-sm">{{ opt.label }}</span>
-            </label>
-          </div>
-        </div>
+          :item="it"
+          v-model="formData[it.name]"
+        />
 
         <!-- Fallback display -->
         <div v-else class="text-xs text-gray-500">Unsupported field type: {{ it.type }}</div>
