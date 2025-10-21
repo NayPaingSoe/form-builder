@@ -22,8 +22,8 @@ const store = useFormBuilderStore()
 
 function saveField() {
   const key = name.value || 'field'
-  const maxNum = maximum.value?.trim() ? Number(maximum.value) : undefined
-  const prefillVal = predefined.value?.trim()
+  const maxNum = maximum.value ? Number(maximum.value) : undefined
+  const prefillVal = predefined.value
     ? isNaN(Number(predefined.value))
       ? predefined.value
       : Number(predefined.value)
@@ -82,7 +82,7 @@ function saveField() {
 
       <div class="pb-4">
         <label class="text-sm font-medium text-gray-700">Predefined Value</label>
-        <Input v-model="predefined" placeholder="" />
+        <Input type="number" v-model="predefined" placeholder="" />
       </div>
 
       <div class="pb-4 flex items-center gap-2">

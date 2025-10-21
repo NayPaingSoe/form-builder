@@ -19,8 +19,8 @@ const store = useFormBuilderStore()
 
 function saveField() {
   const key = name.value || 'field'
-  const maxLenNum = maxlength.value?.trim() ? Number(maxlength.value) : undefined
-  const prefillVal = predefined.value?.trim()
+  const maxLenNum = maxlength.value ? Number(maxlength.value) : undefined
+  const prefillVal = predefined.value
     ? isNaN(Number(predefined.value))
       ? predefined.value
       : Number(predefined.value)
