@@ -42,7 +42,17 @@ function saveField() {
   }
   store.addItem(item)
   toast.success('Success', { description: 'Radio Field has been created' })
+  resetFormInputs()
   console.log(store.items)
+}
+
+function resetFormInputs() {
+  name.value = ''
+  label.value = ''
+  placeholder.value = ''
+  options.value = [{ label: 'First Choice', value: 'first_choice' }]
+  layout.value = 'Normal'
+  inputType.value = 'Radio'
 }
 </script>
 

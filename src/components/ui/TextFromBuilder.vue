@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useFormBuilderStore } from '@/stores/form_builder'
 import { toast } from 'vue-sonner'
+import { _ } from 'node_modules/tailwindcss/dist/colors-b_6i0Oi7'
 
 const inputType = ref('Text')
 const name = ref('')
@@ -41,7 +42,19 @@ function saveField() {
   toast.success('Success', {
     description: 'Text Field has been created',
   })
+  // reset form fields
+  resetFormInputs()
   console.log(store.items)
+}
+function resetFormInputs() {
+  name.value = ''
+  label.value = ''
+  placeholder.value = ''
+  predefined.value = ''
+  required.value = false
+  maxlength.value = '280'
+  layout.value = 'Normal'
+  inputType.value = 'Text'
 }
 </script>
 

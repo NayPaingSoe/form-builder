@@ -54,7 +54,23 @@ function saveField() {
   toast.success('Success', {
     description: 'Number Field has been created',
   })
+  // reset form fields
+  resetFormInputs()
   console.log(store.items)
+}
+
+function resetFormInputs() {
+  name.value = ''
+  label.value = ''
+  placeholder.value = ''
+  predefined.value = ''
+  required.value = false
+  maximum.value = ''
+  allowDecimal.value = false
+  visibleField.value = ''
+  visibleRule.value = ''
+  layout.value = 'Normal'
+  inputType.value = 'Number'
 }
 </script>
 
