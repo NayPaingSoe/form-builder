@@ -6,6 +6,9 @@ import { Button } from '@/components/ui/button'
 import { useFormBuilderStore } from '@/stores/form_builder'
 import { toast } from 'vue-sonner'
 import type { NumberFieldInputsT } from '@/lib/types'
+import * as yup from 'yup'
+import { useForm } from 'vee-validate'
+import { toTypedSchema } from '@vee-validate/yup'
 
 const numberInputFields = ref<NumberFieldInputsT>({
   name: '',
@@ -21,12 +24,48 @@ const numberInputFields = ref<NumberFieldInputsT>({
 
 const store = useFormBuilderStore()
 
-function saveField() {
-  const targetName =
-    store.isEditingText && store.editingItemName
-      ? store.editingItemName
-      : numberInputFields.value.name || 'field'
-  const updated: NumberFieldInputsT = { ...numberInputFields.value, name: targetName }
+const numberSchema = yup.object({
+  name: yup.string().trim().required('Name is required'),
+  display: yup.object({
+    label: yup.string().trim().required('Label is required'),
+    placeholder: yup.string().optional(),
+  }),
+  rule: yup.string().optional(),
+  prefill: yup.object({
+    value: yup.mixed<string | number | ''>().optional(),
+  }),
+  value_constraints: yup.object({
+    maximum: yup
+      .number()
+      .typeError('Maximum must be a number')
+      .min(0, 'Maximum must be >= 0')
+      .nullable()
+      .transform((v, o) => (o === '' || o === null ? undefined : v)),
+    allow_decimal: yup.number().oneOf([0, 1]).required(),
+  }),
+  visible: yup.object({ duration: yup.string().optional() }).optional(),
+  builder: yup.object({ type: yup.string().required() }),
+  layout: yup.mixed<'Normal' | 'Compact'>().oneOf(['Normal', 'Compact']).required(),
+  type: yup.string().oneOf(['Number']).required(),
+}) as yup.ObjectSchema<Required<NumberFieldInputsT>>
+
+const { errors, handleSubmit, defineField, setValues, resetForm } = useForm<Required<NumberFieldInputsT>>({
+  validationSchema: toTypedSchema(numberSchema),
+  initialValues: numberInputFields.value as Required<NumberFieldInputsT>,
+})
+
+const [fName] = defineField('name')
+const [fLabel] = defineField('display.label')
+const [fPlaceholder] = defineField('display.placeholder')
+const [fPrefill] = defineField('prefill.value')
+const [fMaximum] = defineField('value_constraints.maximum')
+const [fAllowDecimal] = defineField('value_constraints.allow_decimal')
+const [fLayout] = defineField('layout')
+const [fRule] = defineField('rule')
+
+const onSubmit = handleSubmit((values) => {
+  const targetName = store.isEditingText && store.editingItemName ? store.editingItemName : values.name || 'field'
+  const updated: NumberFieldInputsT = { ...values, name: targetName }
 
   const idx = store.items.findIndex((it) => it.name === targetName)
   if (idx !== -1) {
@@ -41,33 +80,34 @@ function saveField() {
     resetFormInputs()
   }
   console.log(store.items)
-}
+})
 
 function resetFormInputs() {
-  numberInputFields.value = {
-    name: '',
-    display: { label: '', placeholder: '' },
-    prefill: { value: '' },
-    value_constraints: { maximum: 0, allow_decimal: 0 },
-    visible: { duration: '' },
-    builder: { type: 'simple_input' },
-    layout: 'Normal',
-    type: 'Number',
-  }
+  resetForm({
+    values: {
+      name: '',
+      display: { label: '', placeholder: '' },
+      prefill: { value: '' },
+      value_constraints: { maximum: 0 as unknown as number | '', allow_decimal: 0 },
+      visible: { duration: '' },
+      builder: { type: 'simple_input' },
+      layout: 'Normal',
+      type: 'Number',
+    } as Required<NumberFieldInputsT>,
+  })
 }
 
 const requiredBool = computed({
-  get: () => numberInputFields.value.rule === 'required',
+  get: () => (fRule.value as string | undefined) === 'required',
   set: (v: boolean) => {
-    if (v) numberInputFields.value.rule = 'required'
-    else delete numberInputFields.value.rule
+    ;(fRule.value as string | undefined) = v ? 'required' : undefined
   },
 })
 
 const allowDecimalBool = computed({
-  get: () => numberInputFields.value.value_constraints.allow_decimal === 1,
+  get: () => (fAllowDecimal.value as number) === 1,
   set: (v: boolean) => {
-    numberInputFields.value.value_constraints.allow_decimal = v ? 1 : 0
+    ;(fAllowDecimal.value as number) = v ? 1 : 0
   },
 })
 
@@ -77,20 +117,20 @@ watch(
     if (editing && store.editTextDraft) {
       const { display, prefill, value_constraints, visible, builder, layout, rule, name, type } =
         store.editTextDraft
-      numberInputFields.value = {
-        name: name,
-        display: { label: display?.label, placeholder: display?.placeholder },
+      setValues({
+        name: name || '',
+        display: { label: display?.label || '', placeholder: display?.placeholder || '' },
         rule,
-        prefill: { value: prefill?.value ? +prefill.value : '' },
+        prefill: { value: prefill?.value ?? '' },
         value_constraints: {
-          maximum: value_constraints?.maximum || 0,
-          allow_decimal: value_constraints?.allow_decimal || 0,
+          maximum: (value_constraints?.maximum as number | '') ?? 0,
+          allow_decimal: (value_constraints?.allow_decimal as number) ?? 0,
         },
         visible: { duration: visible?.duration || '' },
-        builder: { type: builder?.type },
-        layout: layout,
-        type: type,
-      }
+        builder: { type: builder?.type || 'simple_input' },
+        layout: (layout as 'Normal' | 'Compact') ?? 'Normal',
+        type: (type as string) || 'Number',
+      } as Required<NumberFieldInputsT>)
     }
   },
 )
@@ -105,22 +145,32 @@ watch(
     <CardContent class="space-y-4 w-full">
       <div class="pb-4">
         <label class="text-sm font-medium text-gray-700">Name</label>
-        <Input v-model="numberInputFields.name" placeholder="unique_field_name" />
+        <Input v-model="fName" placeholder="unique_field_name" />
+        <span v-if="errors.name" class="text-xs text-red-600 mt-1 block">{{ errors.name }}</span>
       </div>
 
       <div class="pb-4">
         <label class="text-sm font-medium text-gray-700">Label</label>
-        <Input v-model="numberInputFields.display.label" placeholder="" />
+        <Input v-model="fLabel" placeholder="" />
+        <span v-if="errors['display.label']" class="text-xs text-red-600 mt-1 block">
+          {{ errors['display.label'] }}
+        </span>
       </div>
 
       <div class="pb-4">
         <label class="text-sm font-medium text-gray-700">Placeholder</label>
-        <Input v-model="numberInputFields.display.placeholder" placeholder="" />
+        <Input v-model="fPlaceholder" placeholder="" />
+        <span v-if="errors['display.placeholder']" class="text-xs text-red-600 mt-1 block">
+          {{ errors['display.placeholder'] }}
+        </span>
       </div>
 
       <div class="pb-4">
         <label class="text-sm font-medium text-gray-700">Predefined Value</label>
-        <Input type="number" v-model.number="numberInputFields.prefill.value" placeholder="" />
+        <Input type="number" v-model.number="fPrefill" placeholder="" />
+        <span v-if="errors['prefill.value']" class="text-xs text-red-600 mt-1 block">
+          {{ errors['prefill.value'] }}
+        </span>
       </div>
 
       <div class="pb-4 flex items-center gap-2">
@@ -130,12 +180,10 @@ watch(
 
       <div class="pb-4">
         <label class="text-sm font-medium text-gray-700">Maximum</label>
-        <Input
-          v-model.number="numberInputFields.value_constraints.maximum"
-          type="number"
-          min="1"
-          placeholder=""
-        />
+        <Input v-model.number="fMaximum" type="number" min="0" placeholder="" />
+        <span v-if="errors['value_constraints.maximum']" class="text-xs text-red-600 mt-1 block">
+          {{ errors['value_constraints.maximum'] }}
+        </span>
       </div>
 
       <div class="pb-4 flex items-center gap-2">
@@ -150,15 +198,16 @@ watch(
 
       <div class="pb-4">
         <label class="text-sm font-medium text-gray-700">Layout</label>
-        <select v-model="numberInputFields.layout" class="border rounded px-3 py-2 text-sm w-full">
+        <select v-model="fLayout" class="border rounded px-3 py-2 text-sm w-full">
           <option value="Normal">Normal</option>
           <option value="Compact">Compact</option>
         </select>
+        <span v-if="errors.layout" class="text-xs text-red-600 mt-1 block">{{ errors.layout }}</span>
       </div>
     </CardContent>
 
     <CardFooter class="flex justify-between pt-4">
-      <Button @click="saveField" class="bg-blue-600 text-white hover:bg-blue-700">Save</Button>
+      <Button @click="onSubmit" class="bg-blue-600 text-white hover:bg-blue-700">Save</Button>
     </CardFooter>
   </Card>
   <pre>
