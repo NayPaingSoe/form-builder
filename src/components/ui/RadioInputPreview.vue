@@ -2,23 +2,9 @@
 import { Button } from '@/components/ui/button'
 import { useFormBuilderStore } from '@/stores/form_builder'
 import { toast } from 'vue-sonner'
-interface DisplayConf {
-  label?: string
-  placeholder?: string
-}
-interface EnumOption {
-  label: string
-  value: string
-}
-type AnyItem = {
-  name: string
-  display?: DisplayConf
-  rule?: string
-  enum?: EnumOption[]
-  type?: string
-}
+import type { RadioFieldInputsT } from '@/lib/types'
 
-const { item, modelValue } = defineProps<{ item: AnyItem; modelValue: unknown }>()
+const { item, modelValue } = defineProps<{ item: RadioFieldInputsT; modelValue: unknown }>()
 const emit = defineEmits<{ (e: 'update:modelValue', v: string): void }>()
 const store = useFormBuilderStore()
 
@@ -26,6 +12,11 @@ function deleteField() {
   if (!item?.name) return
   store.removeItemByName(item.name)
   toast.success('Success', { description: 'Field has been deleted' })
+}
+
+function editFiled() {
+  store.startEditText(item)
+  store.setSelectedField({ label: 'Radio Buttons', value: 'radio' })
 }
 </script>
 
@@ -53,12 +44,7 @@ function deleteField() {
         <span class="text-sm">{{ opt.label }}</span>
       </label>
       <div class="flex gap-2">
-        <Button
-          size="icon"
-          variant="secondary"
-          class="h-8 w-8 text-blue-600"
-          @click="store.setSelectedField({ label: 'Radio Buttons', value: 'radio' })"
-        >
+        <Button size="icon" variant="secondary" class="h-8 w-8 text-blue-600" @click="editFiled">
           ✎
         </Button>
         <Button size="icon" variant="destructive" class="h-8 w-8" @click="deleteField"> − </Button>

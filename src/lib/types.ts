@@ -1,6 +1,6 @@
 export interface inputsFieldsT {
   name: string
-  display?: { label?: string; placeholder?: string }
+  display: { label: string; placeholder?: string }
   rule?: string
   enum?: [
     {
@@ -24,7 +24,7 @@ export interface inputsFieldsT {
 
 export interface TextFieldInputsT {
   name: string
-  display: { label?: string; placeholder?: string }
+  display: { label: string; placeholder?: string }
   rule?: string
   props: { maxlength?: number }
   prefill: { value?: string | '' }
@@ -35,7 +35,7 @@ export interface TextFieldInputsT {
 
 export interface NumberFieldInputsT {
   name: string
-  display: { label?: string; placeholder?: string }
+  display: { label: string; placeholder?: string }
   rule?: string
   prefill: {
     value: string | number | ''
@@ -58,9 +58,9 @@ export interface RadioFieldInputsT {
   rule?: string
   display: {
     label: string
-    placeholder: string
+    placeholder?: string
   }
-  enum: [
+  enum?: [
     {
       label: string
       value: string
