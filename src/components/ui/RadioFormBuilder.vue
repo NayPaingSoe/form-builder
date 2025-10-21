@@ -38,18 +38,17 @@ function removeRadio(index: number) {
   }
 }
 
-const radioSchema = yup
-  .object({
-    name: yup.string().trim().required('Name is required'),
-    display: yup.object({
-      label: yup.string().trim().required('Label is required'),
-      placeholder: yup.string().optional(),
-    }),
-    rule: yup.string().optional(),
-    builder: yup.object({ type: yup.string().required() }),
-    layout: yup.mixed<'Normal' | 'Compact'>().oneOf(['Normal', 'Compact']).required(),
-    type: yup.string().oneOf(['Radio']).required(),
-  }) as yup.ObjectSchema<Required<Omit<RadioFieldInputsT, 'enum'>>>
+const radioSchema = yup.object({
+  name: yup.string().trim().required('Name is required'),
+  display: yup.object({
+    label: yup.string().trim().required('Label is required'),
+    placeholder: yup.string().optional(),
+  }),
+  rule: yup.string().optional(),
+  builder: yup.object({ type: yup.string().required() }),
+  layout: yup.mixed<'Normal' | 'Compact'>().oneOf(['Normal', 'Compact']).required(),
+  type: yup.string().oneOf(['Radio']).required(),
+}) as yup.ObjectSchema<Required<Omit<RadioFieldInputsT, 'enum'>>>
 
 const { errors, handleSubmit, defineField, setValues, resetForm } = useForm<
   Required<Omit<RadioFieldInputsT, 'enum'>>
@@ -69,11 +68,15 @@ const onSubmit = handleSubmit((values) => {
     toast.error('Invalid options', { description: 'Add at least one option with label and value' })
     return
   }
-  const targetName = store.isEditingText && store.editingItemName ? store.editingItemName : values.name || 'field'
+  const targetName =
+    store.isEditingText && store.editingItemName ? store.editingItemName : values.name || 'field'
   const updated: RadioFieldInputsT = {
     ...(values as RadioFieldInputsT),
     name: targetName,
-    enum: options.value.map((o) => ({ label: o.label, value: o.value })) as unknown as RadioFieldInputsT['enum'],
+    enum: options.value.map((o) => ({
+      label: o.label,
+      value: o.value,
+    })) as unknown as RadioFieldInputsT['enum'],
   }
 
   const idx = store.items.findIndex((it) => it.name === targetName)
@@ -126,7 +129,8 @@ watch(
         type: 'Radio',
       } as Required<Omit<RadioFieldInputsT, 'enum'>>)
       // map enum to options list for editing UI
-      options.value = (dEnum?.map((o) => ({ label: o.label || '', value: o.value || '' })) || []) as RadioOption[]
+      options.value = (dEnum?.map((o) => ({ label: o.label || '', value: o.value || '' })) ||
+        []) as RadioOption[]
     }
   },
 )
@@ -141,14 +145,18 @@ watch(
     <CardContent class="space-y-4">
       <!-- Name -->
       <div class="pb-4">
-        <label class="text-sm font-medium text-gray-700">Name</label>
+        <label class="text-sm font-medium text-gray-700"
+          >Name <span class="text-red-600">*</span></label
+        >
         <Input v-model="fName" placeholder="" />
         <span v-if="errors.name" class="text-xs text-red-600 mt-1 block">{{ errors.name }}</span>
       </div>
 
       <!-- Label -->
       <div class="pb-4">
-        <label class="text-sm font-medium text-gray-700">Label</label>
+        <label class="text-sm font-medium text-gray-700"
+          >Label <span class="text-red-600">*</span></label
+        >
         <Input v-model="fLabel" placeholder="" />
         <span v-if="errors['display.label']" class="text-xs text-red-600 mt-1 block">
           {{ errors['display.label'] }}
@@ -209,7 +217,9 @@ watch(
           <option value="Normal">Normal</option>
           <option value="Compact">Compact</option>
         </select>
-        <span v-if="errors.layout" class="text-xs text-red-600 mt-1 block">{{ errors.layout }}</span>
+        <span v-if="errors.layout" class="text-xs text-red-600 mt-1 block">{{
+          errors.layout
+        }}</span>
       </div>
     </CardContent>
 

@@ -142,13 +142,17 @@ watch(
     </CardHeader>
     <CardContent class="space-y-4 w-full">
       <div class="pb-4">
-        <label class="text-sm font-medium text-gray-700">Name</label>
+        <label class="text-sm font-medium text-gray-700"
+          >Name <span class="text-red-600">*</span></label
+        >
         <Input v-model="fName" placeholder="unique_field_name" />
         <span v-if="errors.name" class="text-xs text-red-600 mt-1 block">{{ errors.name }}</span>
       </div>
 
       <div class="pb-4">
-        <label class="text-sm font-medium text-gray-700">Label</label>
+        <label class="text-sm font-medium text-gray-700"
+          >Label <span class="text-red-600">*</span></label
+        >
         <Input v-model="fLabel" placeholder="" />
         <span v-if="errors['display.label']" class="text-xs text-red-600 mt-1 block">
           {{ errors['display.label'] }}

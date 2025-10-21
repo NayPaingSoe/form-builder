@@ -49,7 +49,9 @@ const numberSchema = yup.object({
   type: yup.string().oneOf(['Number']).required(),
 }) as yup.ObjectSchema<Required<NumberFieldInputsT>>
 
-const { errors, handleSubmit, defineField, setValues, resetForm } = useForm<Required<NumberFieldInputsT>>({
+const { errors, handleSubmit, defineField, setValues, resetForm } = useForm<
+  Required<NumberFieldInputsT>
+>({
   validationSchema: toTypedSchema(numberSchema),
   initialValues: numberInputFields.value as Required<NumberFieldInputsT>,
 })
@@ -64,7 +66,8 @@ const [fLayout] = defineField('layout')
 const [fRule] = defineField('rule')
 
 const onSubmit = handleSubmit((values) => {
-  const targetName = store.isEditingText && store.editingItemName ? store.editingItemName : values.name || 'field'
+  const targetName =
+    store.isEditingText && store.editingItemName ? store.editingItemName : values.name || 'field'
   const updated: NumberFieldInputsT = { ...values, name: targetName }
 
   const idx = store.items.findIndex((it) => it.name === targetName)
@@ -144,13 +147,17 @@ watch(
     </CardHeader>
     <CardContent class="space-y-4 w-full">
       <div class="pb-4">
-        <label class="text-sm font-medium text-gray-700">Name</label>
+        <label class="text-sm font-medium text-gray-700"
+          >Name <span class="text-red-600">*</span></label
+        >
         <Input v-model="fName" placeholder="unique_field_name" />
         <span v-if="errors.name" class="text-xs text-red-600 mt-1 block">{{ errors.name }}</span>
       </div>
 
       <div class="pb-4">
-        <label class="text-sm font-medium text-gray-700">Label</label>
+        <label class="text-sm font-medium text-gray-700"
+          >Label <span class="text-red-600">*</span></label
+        >
         <Input v-model="fLabel" placeholder="" />
         <span v-if="errors['display.label']" class="text-xs text-red-600 mt-1 block">
           {{ errors['display.label'] }}
@@ -202,7 +209,9 @@ watch(
           <option value="Normal">Normal</option>
           <option value="Compact">Compact</option>
         </select>
-        <span v-if="errors.layout" class="text-xs text-red-600 mt-1 block">{{ errors.layout }}</span>
+        <span v-if="errors.layout" class="text-xs text-red-600 mt-1 block">{{
+          errors.layout
+        }}</span>
       </div>
     </CardContent>
 
