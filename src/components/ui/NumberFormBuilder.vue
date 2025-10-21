@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -11,7 +11,7 @@ const numberInputFields = ref<NumberFieldInputsT>({
   name: '',
   display: { label: '', placeholder: '' },
   // rule toggled via computed
-  prefill: { value: 0 },
+  prefill: { value: '' },
   value_constraints: { maximum: 0, allow_decimal: 0 },
   visible: { duration: '' },
   builder: { type: 'simple_input' },
@@ -22,14 +22,24 @@ const numberInputFields = ref<NumberFieldInputsT>({
 const store = useFormBuilderStore()
 
 function saveField() {
-  const key = numberInputFields.value.name || 'field'
-  const item: NumberFieldInputsT = { ...numberInputFields.value, name: key }
-  store.addItem(item)
-  toast.success('Success', {
-    description: 'Number Field has been created',
-  })
-  // reset form fields
-  resetFormInputs()
+  const targetName =
+    store.isEditingText && store.editingItemName
+      ? store.editingItemName
+      : numberInputFields.value.name || 'field'
+  const updated: NumberFieldInputsT = { ...numberInputFields.value, name: targetName }
+
+  const idx = store.items.findIndex((it) => it.name === targetName)
+  if (idx !== -1) {
+    const next = [...store.items]
+    next[idx] = updated
+    store.items = next
+    toast.success('Success', { description: 'Number Field has been updated' })
+    if (store.isEditingText) store.cancelEditText()
+  } else {
+    store.addItem(updated)
+    toast.success('Success', { description: 'Number Field has been created' })
+    resetFormInputs()
+  }
   console.log(store.items)
 }
 
@@ -37,7 +47,7 @@ function resetFormInputs() {
   numberInputFields.value = {
     name: '',
     display: { label: '', placeholder: '' },
-    prefill: { value: 0 },
+    prefill: { value: '' },
     value_constraints: { maximum: 0, allow_decimal: 0 },
     visible: { duration: '' },
     builder: { type: 'simple_input' },
@@ -60,13 +70,37 @@ const allowDecimalBool = computed({
     numberInputFields.value.value_constraints.allow_decimal = v ? 1 : 0
   },
 })
+
+watch(
+  () => store.isEditingText,
+  (editing) => {
+    if (editing && store.editTextDraft) {
+      const { display, prefill, value_constraints, visible, builder, layout, rule, name, type } =
+        store.editTextDraft
+      numberInputFields.value = {
+        name: name,
+        display: { label: display?.label, placeholder: display?.placeholder },
+        rule,
+        prefill: { value: prefill?.value ? +prefill.value : '' },
+        value_constraints: {
+          maximum: value_constraints?.maximum || 0,
+          allow_decimal: value_constraints?.allow_decimal || 0,
+        },
+        visible: { duration: visible?.duration || '' },
+        builder: { type: builder?.type },
+        layout: layout,
+        type: type,
+      }
+    }
+  },
+)
 </script>
 
 <template>
   <!-- <Card class="w-full h-full flex flex-col items-center rounded-sm justify-start p-6"> -->
   <Card class="w-full flex flex-col rounded-sm justify-start p-6">
     <CardHeader>
-      <CardTitle class="text-lg font-semibold pl-6">Number</CardTitle>
+      <CardTitle class="text-lg font-semibold">Number</CardTitle>
     </CardHeader>
     <CardContent class="space-y-4 w-full">
       <div class="pb-4">

@@ -9,7 +9,7 @@ export interface inputsFieldsT {
     }[],
   ]
   value_constraints?: {
-    maximum: number
+    maximum: number | ''
     allow_decimal: number
   }
   props?: { maxlength?: number }
@@ -30,7 +30,7 @@ export interface TextFieldInputsT {
   prefill: { value?: string | '' }
   builder: { type: string }
   layout: 'Normal' | 'Compact'
-  type: 'Text'
+  type: string
 }
 
 export interface NumberFieldInputsT {
@@ -38,10 +38,10 @@ export interface NumberFieldInputsT {
   display: { label?: string; placeholder?: string }
   rule?: string
   prefill: {
-    value: number
+    value: string | number | ''
   }
   value_constraints: {
-    maximum: number
+    maximum: number | ''
     allow_decimal: number
   }
   visible: {
@@ -51,5 +51,24 @@ export interface NumberFieldInputsT {
     type: string
   }
   layout: 'Normal' | 'Compact'
-  type: 'Number'
+  type: string
+}
+export interface RadioFieldInputsT {
+  name: string
+  rule?: string
+  display: {
+    label: string
+    placeholder: string
+  }
+  enum: [
+    {
+      label: string
+      value: string
+    }[],
+  ]
+  builder: {
+    type: string
+  }
+  layout: 'Normal' | 'Compact'
+  type: string
 }
