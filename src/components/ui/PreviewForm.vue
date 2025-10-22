@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { useFormBuilderStore } from '@/stores/form_builder'
@@ -46,6 +47,7 @@ interface FormItem {
 }
 
 const store = useFormBuilderStore()
+const router = useRouter()
 
 // Build reactive form data initialized from prefill values
 const formData = ref<Record<string, unknown>>({})
@@ -117,7 +119,7 @@ function isRequired(item: FormItem) {
       <Button
         v-if="items.length"
         class="bg-blue-600 text-white hover:bg-blue-700"
-        @click="() => console.log({ ...formData })"
+        @click="() => router.push({ name: 'renderer' })"
         >Open Form Render</Button
       >
     </CardFooter>

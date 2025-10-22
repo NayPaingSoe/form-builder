@@ -86,6 +86,7 @@ const onSubmit = handleSubmit((values) => {
     store.items = next
     toast.success('Success', { description: 'Radio Field has been updated' })
     if (store.isEditingText) store.cancelEditText()
+    resetFormInputs()
   } else {
     store.addItem(updated)
     toast.success('Success', { description: 'Radio Field has been created' })
@@ -116,23 +117,25 @@ const requiredBool = computed({
 
 // When entering edit mode, load the draft into the form
 watch(
-  () => store.isEditingText,
-  (editing) => {
-    if (editing && store.editTextDraft) {
-      const { name, display, enum: dEnum, builder, layout, rule } = store.editTextDraft
-      setValues({
-        name: name || '',
-        display: { label: display?.label || '', placeholder: display?.placeholder || '' },
-        rule,
-        builder: { type: builder?.type || 'simple_choice' },
-        layout: (layout as 'Normal' | 'Compact') || 'Normal',
-        type: 'Radio',
-      } as Required<Omit<RadioFieldInputsT, 'enum'>>)
-      // map enum to options list for editing UI
-      options.value = (dEnum?.map((o) => ({ label: o.label || '', value: o.value || '' })) ||
-        []) as RadioOption[]
-    }
+  [() => store.isEditingText, () => store.editTextDraft],
+  ([editing, draft]) => {
+    if (!editing || !draft) return
+    const sel = store.selectedField.value
+    if (sel !== 'radio') return
+    const { name, display, enum: dEnum, builder, layout, rule } = draft
+    setValues({
+      name: name || '',
+      display: { label: display?.label || '', placeholder: display?.placeholder || '' },
+      rule,
+      builder: { type: builder?.type || 'simple_choice' },
+      layout: (layout as 'Normal' | 'Compact') || 'Normal',
+      type: 'Radio',
+    } as Required<Omit<RadioFieldInputsT, 'enum'>>)
+    // map enum to options list for editing UI
+    options.value = (dEnum?.map((o) => ({ label: o.label || '', value: o.value || '' })) ||
+      []) as RadioOption[]
   },
+  { immediate: true },
 )
 </script>
 

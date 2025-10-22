@@ -81,6 +81,7 @@ const onSubmit = handleSubmit((values) => {
     store.items = next
     toast.success('Success', { description: 'Text Field has been updated' })
     if (store.isEditingText) store.cancelEditText()
+    resetFormInputs()
   } else {
     store.addItem(updated)
     toast.success('Success', { description: 'Text Field has been created' })
@@ -112,26 +113,30 @@ function resetFormInputs() {
 
 // When entering edit mode, load the draft into the form
 watch(
-  () => store.isEditingText,
-  (editing) => {
-    if (editing && store.editTextDraft) {
-      const { display, props, prefill, builder, layout } = store.editTextDraft
-      const name = store.editTextDraft?.name || ''
+  [() => store.isEditingText, () => store.editTextDraft],
+  ([editing, draft]) => {
+    if (editing && draft) {
+      const sel = store.selectedField.value
+      if (sel !== 'text') return
+      const { display, props, prefill, builder, layout } = draft
+      const name = draft?.name || ''
       setValues({
         name,
         display: {
           label: display?.label || '',
           placeholder: display?.placeholder || '',
         },
-        ...(store.editTextDraft?.rule ? { rule: store.editTextDraft.rule } : {}),
+        ...(draft?.rule ? { rule: draft.rule } : {}),
         props: { maxlength: (props?.maxlength as number) || 280 },
         prefill: { value: (prefill?.value as string) || '' },
         builder: { type: (builder?.type as string) || 'simple_input' },
         layout: layout === 'Compact' ? 'Compact' : 'Normal',
         type: 'Text',
       } as Required<TextFieldInputsT>)
+      console.log('editing')
     }
   },
+  { immediate: true },
 )
 </script>
 

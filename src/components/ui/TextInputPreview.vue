@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { nextTick } from 'vue'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 
@@ -27,9 +28,10 @@ function deleteField() {
   store.removeItemByName(item.name)
   toast.success('Success', { description: 'Field has been deleted' })
 }
-function editFiled() {
-  store.startEditText(item)
+async function editFiled() {
   store.setSelectedField({ label: 'Text Field', value: 'text' })
+  await nextTick()
+  store.startEditText(item)
 }
 </script>
 

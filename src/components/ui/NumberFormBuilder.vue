@@ -77,6 +77,7 @@ const onSubmit = handleSubmit((values) => {
     store.items = next
     toast.success('Success', { description: 'Number Field has been updated' })
     if (store.isEditingText) store.cancelEditText()
+    resetFormInputs()
   } else {
     store.addItem(updated)
     toast.success('Success', { description: 'Number Field has been created' })
@@ -115,27 +116,29 @@ const allowDecimalBool = computed({
 })
 
 watch(
-  () => store.isEditingText,
-  (editing) => {
-    if (editing && store.editTextDraft) {
-      const { display, prefill, value_constraints, visible, builder, layout, rule, name, type } =
-        store.editTextDraft
-      setValues({
-        name: name || '',
-        display: { label: display?.label || '', placeholder: display?.placeholder || '' },
-        rule,
-        prefill: { value: prefill?.value ?? '' },
-        value_constraints: {
-          maximum: (value_constraints?.maximum as number | '') ?? 0,
-          allow_decimal: (value_constraints?.allow_decimal as number) ?? 0,
-        },
-        visible: { duration: visible?.duration || '' },
-        builder: { type: builder?.type || 'simple_input' },
-        layout: (layout as 'Normal' | 'Compact') ?? 'Normal',
-        type: (type as string) || 'Number',
-      } as Required<NumberFieldInputsT>)
-    }
+  [() => store.isEditingText, () => store.editTextDraft],
+  ([editing, draft]) => {
+    if (!editing || !draft) return
+    const sel = store.selectedField.value
+    if (sel !== 'number') return
+    const { display, prefill, value_constraints, visible, builder, layout, rule, name, type } =
+      draft
+    setValues({
+      name: name || '',
+      display: { label: display?.label || '', placeholder: display?.placeholder || '' },
+      rule,
+      prefill: { value: prefill?.value ?? '' },
+      value_constraints: {
+        maximum: (value_constraints?.maximum as number | '') ?? 0,
+        allow_decimal: (value_constraints?.allow_decimal as number) ?? 0,
+      },
+      visible: { duration: visible?.duration || '' },
+      builder: { type: builder?.type || 'simple_input' },
+      layout: (layout as 'Normal' | 'Compact') ?? 'Normal',
+      type: (type as string) || 'Number',
+    } as Required<NumberFieldInputsT>)
   },
+  { immediate: true },
 )
 </script>
 

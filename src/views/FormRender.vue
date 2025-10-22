@@ -2,79 +2,105 @@
 import { ref, computed, watch } from 'vue'
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { useFormBuilderStore } from '@/stores/form_builder'
-import TextInputPreview from '@/components/ui/TextInputPreview.vue'
-import NumberInputPreview from '@/components/ui/NumberInputPreview.vue'
-import RadioInputPreview from '@/components/ui/RadioInputPreview.vue'
-import { VueDraggable } from 'vue-draggable-plus'
+import type { inputsFieldsT } from '@/lib/types'
+import * as yup from 'yup'
+import { useForm } from 'vee-validate'
+import { toTypedSchema } from '@vee-validate/yup'
 
-// Types for items in the builder store
-interface DisplayConf {
-  label?: string
-  placeholder?: string
-}
-interface PropsConf {
-  maxlength?: number
-}
-interface PrefillConf {
-  value?: unknown
-}
-interface BuilderConf {
-  type?: string
-}
-interface NumberConstraints {
-  maximum?: number
-  allow_decimal?: number
-}
-interface EnumOption {
-  label: string
-  value: string
-}
-type FieldType = 'Text' | 'Number' | 'Radio'
-interface FormItem {
-  name: string
-  display?: DisplayConf
-  rule?: string
-  props?: PropsConf
-  prefill?: PrefillConf
-  visible?: Record<string, string>
-  builder?: BuilderConf
-  layout?: string
-  type: FieldType
-  value_constraints?: NumberConstraints
-  enum?: EnumOption[]
-}
-
+// --- Store ---
 const store = useFormBuilderStore()
+const items = computed<inputsFieldsT[]>(() => (store.items as inputsFieldsT[]) || [])
 
-// Build reactive form data initialized from prefill values
-const formData = ref<Record<string, unknown>>({})
-
-function initFormData(items: FormItem[]) {
-  const initial: Record<string, unknown> = {}
-  items.forEach((it) => {
-    const key = it?.name
-    if (!key) return
-    if (it?.type === 'Radio') {
-      initial[key] = it?.prefill?.value ?? ''
-    } else if (it?.type === 'Number') {
-      initial[key] = it?.prefill?.value ?? undefined
-    } else {
-      initial[key] = it?.prefill?.value ?? ''
+// --- Helpers ---
+function getInitialValues(items: inputsFieldsT[]) {
+  const values: Record<string, any> = {}
+  for (const field of items) {
+    if (!field?.name) continue
+    const prefill = field.prefill?.value
+    switch (field.type) {
+      case 'Radio':
+        values[field.name] = prefill ?? ''
+        break
+      case 'Number':
+        values[field.name] = prefill ?? undefined
+        break
+      default:
+        values[field.name] = prefill ?? ''
     }
-  })
-  formData.value = initial
+  }
+  return values
 }
 
-const items = computed<FormItem[]>(() => (store.items as unknown as FormItem[]) || [])
-initFormData(items.value)
+// --- Validation Schema ---
+const validationSchema = computed(() => {
+  const shape: Record<string, yup.AnySchema> = {}
 
-// If items change after init, refresh the form data (simple strategy)
-watch(items, (nv) => initFormData(nv), { deep: true })
+  for (const field of items.value) {
+    if (!field?.name) continue
 
-function isRequired(item: FormItem) {
-  return item?.rule === 'required'
-}
+    // Text
+    if (field.type === 'Text') {
+      let schema = yup.string()
+      if (field.rule === 'required') schema = schema.required('This field is required')
+      const max = (field.props as any)?.maxlength
+      if (max) schema = schema.max(max, `Must be at most ${max} characters`)
+      shape[field.name] = schema
+    }
+
+    // Number
+    if (field.type === 'Number') {
+      let schema = yup.number().typeError('Must be a number')
+      if (field.rule === 'required') schema = schema.required('This field is required')
+
+      const vc = field.value_constraints
+      if (vc?.minimum !== undefined) schema = schema.min(vc.minimum, `Minimum is ${vc.minimum}`)
+      if (vc?.maximum !== undefined) schema = schema.max(vc.maximum, `Maximum is ${vc.maximum}`)
+      if (!vc?.allow_decimal) schema = schema.integer('Must be an integer')
+
+      shape[field.name] = schema
+    }
+
+    // Radio
+    if (field.type === 'Radio') {
+      const options = (field.enum || []).map((o: any) => o.value)
+      let schema = yup.mixed().oneOf(options, 'Invalid option')
+      if (field.rule === 'required') schema = schema.required('This field is required')
+      shape[field.name] = schema
+    }
+  }
+
+  return yup.object(shape)
+})
+
+// --- Form Setup ---
+const { errors, handleSubmit, values, setValues, defineField } = useForm({
+  validationSchema: computed(() => toTypedSchema(validationSchema.value)),
+  initialValues: getInitialValues(items.value),
+})
+
+// --- Field Registration ---
+const fields = ref<Record<string, any>>({})
+watch(
+  items,
+  (newItems) => {
+    const next: Record<string, any> = {}
+    for (const field of newItems) {
+      if (!field?.name) continue
+      const [inputRef] = defineField(field.name)
+      next[field.name] = inputRef
+    }
+    fields.value = next
+    setValues(getInitialValues(newItems))
+  },
+  { immediate: true, deep: true },
+)
+
+// --- Submit ---
+const onSubmit = handleSubmit((vals) => {
+  console.log('Submit values:', vals)
+})
 </script>
 
 <template>
@@ -82,44 +108,70 @@ function isRequired(item: FormItem) {
     <CardHeader>
       <CardTitle class="text-lg font-semibold pl-1">Form Render</CardTitle>
     </CardHeader>
+
     <CardContent class="space-y-6 w-full">
-      <VueDraggable v-model="store.items">
-        <div v-for="it in items" :key="it.name" class="space-y-2">
-          <!-- Text Field -->
-          <TextInputPreview
-            v-if="it.type === 'Text'"
-            :item="it"
-            type="renderer"
-            v-model="formData[it.name]"
+      <div v-for="item in items" :key="item.name" class="space-y-4">
+        <!-- Text -->
+        <div v-if="item.type === 'Text'">
+          <label class="text-sm font-medium">
+            {{ item.display?.label }}
+            <span v-if="item.rule === 'required'" class="text-red-600"> *</span>
+          </label>
+          <Input
+            v-model="fields[item.name]"
+            :placeholder="item.display?.placeholder"
+            :maxlength="item.props?.maxlength"
           />
-
-          <!-- Number Field -->
-          <NumberInputPreview
-            v-else-if="it.type === 'Number' && it.builder?.type === 'simple_input'"
-            :item="it"
-            v-model="formData[it.name]"
-          />
-
-          <!-- Radio Field -->
-          <RadioInputPreview
-            v-else-if="it.type === 'Radio' && it.builder?.type === 'simple_choice'"
-            :item="it"
-            v-model="formData[it.name]"
-          />
-
-          <!-- Fallback display -->
-          <div v-else class="text-xs text-gray-500">Unsupported field type: {{ it.type }}</div>
+          <p v-if="errors[item.name]" class="text-xs text-red-600">{{ errors[item.name] }}</p>
         </div>
-      </VueDraggable>
+
+        <!-- Number -->
+        <div v-if="item.type === 'Number'">
+          <label class="text-sm font-medium">
+            {{ item.display?.label }}
+            <span v-if="item.rule === 'required'" class="text-red-600"> *</span>
+          </label>
+          <Input
+            v-model.number="fields[item.name]"
+            type="number"
+            :placeholder="item.display?.placeholder"
+            :max="item.value_constraints?.maximum"
+            :step="item.value_constraints?.allow_decimal ? 'any' : 1"
+          />
+          <p v-if="errors[item.name]" class="text-xs text-red-600">{{ errors[item.name] }}</p>
+        </div>
+
+        <!-- Radio -->
+        <div v-if="item.type === 'Radio'">
+          <label class="text-sm font-medium block pb-1">
+            {{ item.display?.label }}
+            <span v-if="item.rule === 'required'" class="text-red-600"> *</span>
+          </label>
+          <div v-for="opt in item.enum || []" :key="opt.value">
+            <label class="flex items-center space-x-2">
+              <input
+                type="radio"
+                :name="item.name"
+                :value="opt.value"
+                v-model="fields[item.name]"
+              />
+              <span class="text-sm">{{ opt.label }}</span>
+            </label>
+          </div>
+          <p v-if="errors[item.name]" class="text-xs text-red-600">{{ errors[item.name] }}</p>
+        </div>
+      </div>
     </CardContent>
 
     <CardFooter class="flex justify-between pt-4">
       <Button
         v-if="items.length"
         class="bg-blue-600 text-white hover:bg-blue-700"
-        @click="() => console.log({ ...formData })"
-        >Open Form Render</Button
+        @click="onSubmit"
       >
+        Submit Form
+      </Button>
+      <!-- <pre>{{ values }}</pre> -->
     </CardFooter>
   </Card>
 </template>

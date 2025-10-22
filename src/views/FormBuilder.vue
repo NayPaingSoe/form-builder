@@ -15,7 +15,6 @@
       </div>
     </aside>
 
-    <!-- Main Canvas -->
     <main class="col-span-2 flex-1">
       <NoSelectedFormBuilder v-if="store.selectedField.value === ''" />
       <TextFormBuilder v-if="store.selectedField.value === 'text'" />
@@ -30,8 +29,6 @@
 </template>
 
 <script setup lang="ts">
-import { Card, CardHeader, CardTitle } from '@/components/ui/card'
-
 import { Button } from '@/components/ui/button'
 import PreviewForm from '@/components/ui/PreviewForm.vue'
 import TextFormBuilder from '@/components/ui/TextFormBuilder.vue'
