@@ -1,15 +1,15 @@
 <template>
-  <div class="grid mt-12 grid-cols-5 gap-2 w-full min-h-[80vh] text-gray-900">
+  <div class="grid mt-12 grid-cols-5 gap-4 w-full min-h-[80vh] text-slate-900">
     <!-- Left Sidebar -->
-    <aside class="col-span-1 border-r bg-white flex flex-col rounded-sm">
-      <p class="text-lg font-semibold p-3 pl-4">Fields</p>
-      <hr class="border-gray-300 w-full" />
+    <aside class="col-span-1 border border-slate-200/70 bg-white/70 shadow-sm rounded-xl backdrop-blur overflow-hidden">
+      <p class="text-sm md:text-base font-semibold tracking-tight text-slate-900 p-3 pl-4">Fields</p>
+      <hr class="border-slate-200/70 w-full" />
       <div class="grid grid-cols-2 gap-2 overflow-y-auto p-4">
         <Button
           v-for="(field, i) in fields"
           :key="i"
           variant="outline"
-          class="w-full"
+          class="w-full h-9 rounded-md"
           @click="selectFieldHandler(field)"
         >
           {{ field.label }}

@@ -139,69 +139,69 @@ watch(
 </script>
 
 <template>
-  <Card class="w-full flex flex-col rounded-sm justify-start pt-4">
+  <Card class="w-full flex flex-col justify-start pt-4 border border-slate-200/70 bg-white/70 shadow-sm rounded-xl backdrop-blur">
     <CardHeader class="p-0">
-      <CardTitle class="text-lg font-semibold pl-12">Radio</CardTitle>
-      <hr class="border-gray-300 w-full" />
+      <CardTitle class="text-base md:text-lg font-semibold tracking-tight text-slate-900 pl-12">Radio</CardTitle>
+      <hr class="border-slate-200/70 w-full" />
     </CardHeader>
 
     <div class="p-6 pt-0">
-      <CardContent class="space-y-4">
+      <CardContent class="space-y-5 w-full max-w-2xl mx-auto">
         <!-- Name -->
         <div class="pb-4">
-          <label class="text-sm font-medium text-gray-700"
+          <label class="text-xs font-medium text-slate-600 mb-2 block"
             >Name <span class="text-red-600">*</span></label
           >
-          <Input v-model="fName" placeholder="unique_field_name" />
-          <span v-if="errors.name" class="text-xs text-red-600 mt-1 block">{{ errors.name }}</span>
+          <Input v-model="fName" placeholder="unique_field_name" class="h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400" />
+          <span v-if="errors.name" class="text-xs text-rose-600 mt-1 block">{{ errors.name }}</span>
         </div>
 
         <!-- Label -->
         <div class="pb-4">
-          <label class="text-sm font-medium text-gray-700"
+          <label class="text-xs font-medium text-slate-600 mb-2 block"
             >Label <span class="text-red-600">*</span></label
           >
-          <Input v-model="fLabel" placeholder="" />
-          <span v-if="errors['display.label']" class="text-xs text-red-600 mt-1 block">
+          <Input v-model="fLabel" placeholder="" class="h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400" />
+          <span v-if="errors['display.label']" class="text-xs text-rose-600 mt-1 block">
             {{ errors['display.label'] }}
           </span>
         </div>
 
         <!-- Placeholder -->
         <div class="pb-4">
-          <label class="text-sm font-medium text-gray-700">Placeholder</label>
-          <Input v-model="fPlaceholder" placeholder="" />
-          <span v-if="errors['display.placeholder']" class="text-xs text-red-600 mt-1 block">
+          <label class="text-xs font-medium text-slate-600 mb-2 block">Placeholder</label>
+          <Input v-model="fPlaceholder" placeholder="" class="h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400" />
+          <span v-if="errors['display.placeholder']" class="text-xs text-rose-600 mt-1 block">
             {{ errors['display.placeholder'] }}
           </span>
         </div>
 
         <!-- Required -->
         <div class="pb-4 flex items-center gap-2">
-          <input id="required" type="checkbox" v-model="requiredBool" />
-          <label for="required" class="text-sm font-medium text-gray-700">Required</label>
+          <input id="required" type="checkbox" v-model="requiredBool" class="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-2 focus:ring-slate-400" />
+          <label for="required" class="text-sm font-medium text-slate-700">Required</label>
         </div>
 
         <!-- Radio Options Section -->
         <div class="pb-4">
           <div class="flex items-center justify-between mb-2">
-            <label class="text-sm font-medium text-gray-700">Radio Options</label>
-            <div class="flex items-center gap-2 text-sm text-gray-600"></div>
+            <label class="text-xs font-medium text-slate-600">Radio Options</label>
+            <div class="flex items-center gap-2 text-xs text-slate-500"></div>
           </div>
 
-          <div class="space-y-2 border rounded-md px-2 pb-2">
+          <div class="space-y-2 border border-slate-200 rounded-lg px-3 py-2 bg-white/60">
             <div
               v-for="(opt, index) in options"
               :key="index"
               class="grid grid-cols-2 gap-2 pt-2 items-center"
             >
-              <Input v-model="opt.label" class="w-full" placeholder="" />
+              <Input v-model="opt.label" class="w-full h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400" placeholder="" />
               <div class="flex items-center gap-2">
-                <Input v-model="opt.value" class="w-full" placeholder="" />
+                <Input v-model="opt.value" class="w-full h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400" placeholder="" />
                 <Button
                   size="icon"
                   variant="secondary"
-                  class="h-8 w-8 text-blue-600"
+                  class="h-8 w-8 text-slate-700 hover:text-slate-900"
                   @click="addRadio(index)"
                 >
                   +
@@ -221,21 +221,21 @@ watch(
 
         <!-- Layout -->
         <div class="pb-4">
-          <label class="text-sm font-medium text-gray-700">Layout</label>
-          <select v-model="fLayout" class="border rounded px-3 py-2 text-sm w-full">
+          <label class="text-xs font-medium text-slate-600 mb-2 block">Layout</label>
+          <select v-model="fLayout" class="w-full h-9 rounded-md bg-white/80 border border-slate-200 px-3 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400">
             <option value="Normal">Normal</option>
             <option value="Compact">Compact</option>
           </select>
-          <span v-if="errors.layout" class="text-xs text-red-600 mt-1 block">{{
+          <span v-if="errors.layout" class="text-xs text-rose-600 mt-1 block">{{
             errors.layout
           }}</span>
         </div>
       </CardContent>
 
       <!-- Footer -->
-      <CardFooter class="flex justify-center">
+      <CardFooter class="flex justify-end">
         <div class="flex gap-2">
-          <Button @click="onSubmit" class="bg-blue-600 text-white hover:bg-blue-700 px-10">
+          <Button @click="onSubmit" class="h-9 px-6 rounded-md bg-slate-900 text-white hover:bg-slate-800 shadow-sm ring-1 ring-slate-900/10">
             {{ store.isEditingText ? 'Update' : 'Add' }}
           </Button>
         </div>

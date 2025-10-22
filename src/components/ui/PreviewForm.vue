@@ -86,13 +86,13 @@ function asAny<T>(v: T): any {
 </script>
 
 <template>
-  <Card class="w-full flex flex-col rounded-sm justify-start pt-4 min-h-[90vh]">
+  <Card class="w-full flex flex-col justify-start pt-4 min-h-[90vh] border border-slate-200/70 bg-white/70 shadow-sm rounded-xl backdrop-blur">
     <CardHeader class="p-0">
-      <CardTitle class="text-lg font-semibold pl-12">Preview Form</CardTitle>
-      <hr class="border-gray-300 w-full" />
+      <CardTitle class="text-base md:text-lg font-semibold tracking-tight text-slate-900 pl-12">Preview Form</CardTitle>
+      <hr class="border-slate-200/70 w-full" />
     </CardHeader>
     <div class="p-6 pt-0">
-      <CardContent class="space-y-6 w-full">
+      <CardContent class="space-y-6 w-full max-w-2xl mx-auto">
         <VueDraggable v-model="store.items">
           <div v-for="it in items" :key="it.name" class="space-y-2">
             <!-- Heading -->
@@ -120,7 +120,7 @@ function asAny<T>(v: T): any {
             />
 
             <!-- Fallback display -->
-            <div v-else class="text-xs text-gray-500">Unsupported field type: {{ it.type }}</div>
+            <div v-else class="text-xs text-slate-500">Unsupported field type: {{ it.type }}</div>
           </div>
         </VueDraggable>
       </CardContent>
@@ -128,7 +128,7 @@ function asAny<T>(v: T): any {
       <CardFooter class="flex justify-between pt-4">
         <Button
           v-if="items.length"
-          class="bg-blue-600 text-white hover:bg-blue-700"
+          class="h-9 px-4 rounded-md bg-slate-900 text-white hover:bg-slate-800 shadow-sm ring-1 ring-slate-900/10"
           @click="() => router.push({ name: 'renderer' })"
           >Preview User Form</Button
         >

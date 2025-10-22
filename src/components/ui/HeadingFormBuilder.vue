@@ -67,34 +67,34 @@ watch(
 </script>
 
 <template>
-  <Card class="w-full flex flex-col rounded-sm justify-start pt-4 min-h-[90vh]">
+  <Card class="w-full flex flex-col justify-start pt-4 min-h-[90vh] border border-slate-200/70 bg-white/70 shadow-sm rounded-xl backdrop-blur">
     <CardHeader class="p-0">
-      <CardTitle class="text-lg font-semibold pl-12">Heading</CardTitle>
-      <hr class="border-gray-300 w-full" />
+      <CardTitle class="text-base md:text-lg font-semibold tracking-tight text-slate-900 pl-12">Heading</CardTitle>
+      <hr class="border-slate-200/70 w-full" />
     </CardHeader>
     <div class="p-6 pt-0">
-      <CardContent class="space-y-4 w-full">
+      <CardContent class="space-y-5 w-full max-w-2xl mx-auto">
         <div class="pb-4">
-          <label class="text-sm font-medium text-gray-700"
+          <label class="text-xs font-medium text-slate-600 mb-2 block"
             >Name <span class="text-red-600">*</span></label
           >
-          <Input v-model="fName" placeholder="unique_field_name" />
-          <span v-if="errors.name" class="text-xs text-red-600 mt-1 block">{{ errors.name }}</span>
+          <Input v-model="fName" placeholder="unique_field_name" class="h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400" />
+          <span v-if="errors.name" class="text-xs text-rose-600 mt-1 block">{{ errors.name }}</span>
         </div>
 
         <div class="pb-4">
-          <label class="text-sm font-medium text-gray-700"
+          <label class="text-xs font-medium text-slate-600 mb-2 block"
             >Label <span class="text-red-600">*</span></label
           >
-          <Input v-model="fLabel" placeholder="" />
-          <span v-if="errors.label" class="text-xs text-red-600 mt-1 block">{{
+          <Input v-model="fLabel" placeholder="" class="h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400" />
+          <span v-if="errors.label" class="text-xs text-rose-600 mt-1 block">{{
             errors.label
           }}</span>
         </div>
       </CardContent>
 
-      <CardFooter class="flex justify-center pt-12">
-        <Button @click="onSubmit" class="bg-blue-600 text-white hover:bg-blue-700 px-10">
+      <CardFooter class="flex justify-end pt-4">
+        <Button @click="onSubmit" class="h-9 px-6 rounded-md bg-slate-900 text-white hover:bg-slate-800 shadow-sm ring-1 ring-slate-900/10">
           {{ store.isEditingText ? 'Update' : 'Add' }}
         </Button>
       </CardFooter>
