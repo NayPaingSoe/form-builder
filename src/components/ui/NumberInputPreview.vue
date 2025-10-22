@@ -5,15 +5,8 @@ import { useFormBuilderStore } from '@/stores/form_builder'
 import { toast } from 'vue-sonner'
 import type { NumberFieldInputsT } from '@/lib/types'
 
-const { item, modelValue } = defineProps<{ item: NumberFieldInputsT; modelValue: unknown }>()
-const emit = defineEmits<{ (e: 'update:modelValue', v: number | undefined): void }>()
+const { item } = defineProps<{ item: NumberFieldInputsT }>()
 const store = useFormBuilderStore()
-
-function onInput(e: Event) {
-  const t = e.target as HTMLInputElement
-  const num = t.value === '' ? undefined : Number(t.value)
-  emit('update:modelValue', typeof num === 'number' && !isNaN(num) ? num : undefined)
-}
 
 function deleteField() {
   if (!item?.name) return
@@ -37,26 +30,13 @@ function editField() {
     </div>
     <div class="flex gap-2">
       <Input
-        :value="
-          typeof modelValue === 'number'
-            ? modelValue
-            : modelValue === '' || modelValue == null
-              ? undefined
-              : Number(modelValue)
-        "
         :placeholder="item.display?.placeholder"
         :required="item.rule === 'required'"
         type="number"
         :max="item.value_constraints?.maximum"
         :step="item.value_constraints?.allow_decimal ? 'any' : 1"
-        @input="onInput"
       />
-      <Button
-        size="icon"
-        variant="secondary"
-        class="h-8 w-8 text-blue-600"
-        @click="editField"
-      >
+      <Button size="icon" variant="secondary" class="h-8 w-8 text-blue-600" @click="editField">
         ✎
       </Button>
       <Button size="icon" variant="destructive" class="h-8 w-8" @click="deleteField"> − </Button>

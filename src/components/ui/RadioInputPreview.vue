@@ -4,8 +4,7 @@ import { useFormBuilderStore } from '@/stores/form_builder'
 import { toast } from 'vue-sonner'
 import type { RadioFieldInputsT } from '@/lib/types'
 
-const { item, modelValue } = defineProps<{ item: RadioFieldInputsT; modelValue: unknown }>()
-const emit = defineEmits<{ (e: 'update:modelValue', v: string): void }>()
+const { item } = defineProps<{ item: RadioFieldInputsT }>()
 const store = useFormBuilderStore()
 
 function deleteField() {
@@ -15,8 +14,8 @@ function deleteField() {
 }
 
 function editFiled() {
-  store.startEditText(item)
   store.setSelectedField({ label: 'Radio Buttons', value: 'radio' })
+  store.startEditText(item)
 }
 </script>
 
@@ -34,13 +33,7 @@ function editFiled() {
         :key="item.name + '_' + opt.value"
         class="inline-flex items-center gap-2"
       >
-        <input
-          type="radio"
-          :name="item.name"
-          :value="opt.value"
-          :checked="modelValue === opt.value"
-          @change="() => emit('update:modelValue', opt.value)"
-        />
+        <input type="radio" :name="item.name" :value="opt.value" />
         <span class="text-sm">{{ opt.label }}</span>
       </label>
       <div class="flex gap-2">

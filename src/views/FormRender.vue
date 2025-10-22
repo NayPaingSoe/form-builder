@@ -110,21 +110,26 @@ const onSubmit = handleSubmit((vals) => {
 </script>
 
 <template>
-  <Card class="w-full flex flex-col justify-start min-h-[90vh] min-w-xl pt-4 border border-slate-200/70 bg-white/70 shadow-sm rounded-xl backdrop-blur">
+  <Card
+    class="w-full flex flex-col justify-start min-h-[90vh] min-w-xl pt-4 border border-slate-200/70 bg-white/70 shadow-sm rounded-xl backdrop-blur"
+  >
     <CardHeader class="p-0">
-      <CardTitle class="text-base md:text-lg font-semibold tracking-tight text-slate-900 text-center pl-1">Form Render</CardTitle>
+      <CardTitle
+        class="text-base md:text-lg font-semibold tracking-tight text-slate-900 text-center pl-1"
+        >Form Render</CardTitle
+      >
       <hr class="border-slate-200/70 w-full" />
     </CardHeader>
     <div class="p-6 pt-0">
       <CardContent class="space-y-6 w-full max-w-2xl mx-auto">
         <div v-for="item in items" :key="item.name" class="space-y-4">
           <!-- Heading -->
-          <div v-if="item.type === 'Heading'" class="py-2">
+          <div v-if="item.type === 'Heading'" class="pt-3 pb-4">
             <p class="text-lg font-semibold!">{{ item.display?.label }}</p>
           </div>
           <!-- Text -->
           <div v-else-if="item.type === 'Text'" class="pb-4">
-            <label class="text-xs font-medium text-slate-600 mb-2 block">
+            <label class="text-xs font-medium text-slate-600 mb-2 pb-1 block">
               {{ item.display?.label }}
               <span v-if="item.rule === 'required'" class="text-red-600"> *</span>
             </label>
@@ -134,12 +139,14 @@ const onSubmit = handleSubmit((vals) => {
               :maxlength="item.props?.maxlength"
               class="h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400"
             />
-            <p v-if="getError(item.name)" class="text-xs text-rose-600">{{ getError(item.name) }}</p>
+            <p v-if="getError(item.name)" class="text-xs text-rose-600">
+              {{ getError(item.name) }}
+            </p>
           </div>
 
           <!-- Number -->
           <div v-else-if="item.type === 'Number'" class="pb-4">
-            <label class="text-xs font-medium text-slate-600 mb-2 block">
+            <label class="text-xs font-medium text-slate-600 mb-2 pb-1 block">
               {{ item.display?.label }}
               <span v-if="item.rule === 'required'" class="text-red-600"> *</span>
             </label>
@@ -151,12 +158,14 @@ const onSubmit = handleSubmit((vals) => {
               :step="item.value_constraints?.allow_decimal ? 'any' : 1"
               class="h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400"
             />
-            <p v-if="getError(item.name)" class="text-xs text-rose-600">{{ getError(item.name) }}</p>
+            <p v-if="getError(item.name)" class="text-xs text-rose-600">
+              {{ getError(item.name) }}
+            </p>
           </div>
 
           <!-- Radio -->
           <div v-else-if="item.type === 'Radio'" class="pb-4">
-            <label class="text-xs font-medium text-slate-600 mb-2 block">
+            <label class="text-xs font-medium text-slate-600 mb-2 pb-1 lock">
               {{ item.display?.label }}
               <span v-if="item.rule === 'required'" class="text-red-600"> *</span>
             </label>
@@ -172,7 +181,9 @@ const onSubmit = handleSubmit((vals) => {
                 <span class="text-sm text-slate-700 pl-2">{{ opt.label }}</span>
               </label>
             </div>
-            <p v-if="getError(item.name)" class="text-xs text-rose-600">{{ getError(item.name) }}</p>
+            <p v-if="getError(item.name)" class="text-xs text-rose-600">
+              {{ getError(item.name) }}
+            </p>
           </div>
         </div>
       </CardContent>

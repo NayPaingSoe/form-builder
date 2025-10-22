@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { nextTick } from 'vue'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 
@@ -7,21 +6,11 @@ import { useFormBuilderStore } from '@/stores/form_builder'
 import { toast } from 'vue-sonner'
 import type { TextFieldInputsT } from '@/lib/types'
 
-const { item, modelValue, propFunction, type } = defineProps<{
-  type: 'renderer' | 'builder'
+const { item } = defineProps<{
   item: TextFieldInputsT
-  modelValue: unknown
-  propFunction?: (v: string) => void
 }>()
 
 const store = useFormBuilderStore()
-
-function onInput(e: Event) {
-  const t = e.target as HTMLInputElement
-  if (typeof propFunction === 'function') {
-    propFunction(t.value)
-  }
-}
 
 function deleteField() {
   if (!item?.name) return
@@ -30,7 +19,6 @@ function deleteField() {
 }
 async function editFiled() {
   store.setSelectedField({ label: 'Text Field', value: 'text' })
-  await nextTick()
   store.startEditText(item)
 }
 </script>
@@ -44,19 +32,15 @@ async function editFiled() {
     </div>
     <div class="flex gap-2">
       <Input
-        :value="typeof modelValue === 'string' ? modelValue : String(modelValue ?? '')"
         :placeholder="item.display?.placeholder"
         :maxlength="item.props?.maxlength"
         :required="item.rule === 'required'"
         type="text"
-        @input="onInput"
       />
-      <template v-if="type === 'builder'">
-        <Button size="icon" variant="secondary" class="h-8 w-8 text-blue-600" @click="editFiled">
-          ✎
-        </Button>
-        <Button size="icon" variant="destructive" class="h-8 w-8" @click="deleteField"> − </Button>
-      </template>
+      <Button size="icon" variant="secondary" class="h-8 w-8 text-blue-600" @click="editFiled">
+        ✎
+      </Button>
+      <Button size="icon" variant="destructive" class="h-8 w-8" @click="deleteField"> − </Button>
     </div>
   </div>
 </template>

@@ -1,15 +1,19 @@
 <template>
   <div class="grid mt-12 grid-cols-5 gap-4 w-full min-h-[80vh] text-slate-900">
     <!-- Left Sidebar -->
-    <aside class="col-span-1 border border-slate-200/70 bg-white/70 shadow-sm rounded-xl backdrop-blur overflow-hidden">
-      <p class="text-sm md:text-base font-semibold tracking-tight text-slate-900 p-3 pl-4">Fields</p>
+    <aside
+      class="col-span-1 border border-slate-200/70 bg-white/70 shadow-sm rounded-xl backdrop-blur overflow-hidden"
+    >
+      <p class="text-sm md:text-base font-semibold tracking-tight text-slate-900 p-3 pl-4">
+        Fields
+      </p>
       <hr class="border-slate-200/70 w-full" />
       <div class="grid grid-cols-2 gap-2 overflow-y-auto p-4">
         <Button
           v-for="(field, i) in fields"
           :key="i"
           variant="outline"
-          class="w-full h-9 rounded-md"
+          class="w-full h-9 rounded-md font-medium!"
           @click="selectFieldHandler(field)"
         >
           {{ field.label }}
@@ -40,12 +44,12 @@ import RadioFormBuilder from '@/components/ui/RadioFormBuilder.vue'
 import NumberFormBuilder from '@/components/ui/NumberFormBuilder.vue'
 import HeadingFormBuilder from '@/components/ui/HeadingFormBuilder.vue'
 import { useFormBuilderStore } from '@/stores/form_builder'
-
+import { Heading } from 'lucide-vue-next'
 const fields = [
   { label: 'Heading', value: 'heading' },
-  { label: 'Text Field', value: 'text' },
-  { label: 'Number Field', value: 'number' },
-  { label: 'Radio Buttons', value: 'radio' },
+  { label: 'Text', value: 'text' },
+  { label: 'Number', value: 'number' },
+  { label: 'Radio Btn', value: 'radio' },
 ]
 
 const store = useFormBuilderStore()

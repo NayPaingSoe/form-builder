@@ -50,30 +50,7 @@ interface FormItem {
 const store = useFormBuilderStore()
 const router = useRouter()
 
-// Build reactive form data initialized from prefill values
-const formData = ref<Record<string, unknown>>({})
-
-function initFormData(items: FormItem[]) {
-  const initial: Record<string, unknown> = {}
-  items.forEach((it) => {
-    const key = it?.name
-    if (!key) return
-    if (it?.type === 'Radio') {
-      initial[key] = it?.prefill?.value ?? ''
-    } else if (it?.type === 'Number') {
-      initial[key] = it?.prefill?.value ?? undefined
-    } else {
-      initial[key] = it?.prefill?.value ?? ''
-    }
-  })
-  formData.value = initial
-}
-
 const items = computed<FormItem[]>(() => (store.items as unknown as FormItem[]) || [])
-initFormData(items.value)
-
-// If items change after init, refresh the form data (simple strategy)
-watch(items, (nv) => initFormData(nv), { deep: true })
 
 function isRequired(item: FormItem) {
   return item?.rule === 'required'
@@ -86,9 +63,13 @@ function asAny<T>(v: T): any {
 </script>
 
 <template>
-  <Card class="w-full flex flex-col justify-start pt-4 min-h-[90vh] border border-slate-200/70 bg-white/70 shadow-sm rounded-xl backdrop-blur">
+  <Card
+    class="w-full flex flex-col justify-start pt-4 min-h-[90vh] border border-slate-200/70 bg-white/70 shadow-sm rounded-xl backdrop-blur"
+  >
     <CardHeader class="p-0">
-      <CardTitle class="text-base md:text-lg font-semibold tracking-tight text-slate-900 pl-12">Preview Form</CardTitle>
+      <CardTitle class="text-base md:text-lg font-semibold tracking-tight text-slate-900 pl-12"
+        >Preview Form</CardTitle
+      >
       <hr class="border-slate-200/70 w-full" />
     </CardHeader>
     <div class="p-6 pt-0">
@@ -98,26 +79,13 @@ function asAny<T>(v: T): any {
             <!-- Heading -->
             <HeadingInputPreview v-if="it.type === 'Heading'" :item="asAny(it)" />
             <!-- Text Field -->
-            <TextInputPreview
-              v-else-if="it.type === 'Text'"
-              :item="asAny(it)"
-              type="builder"
-              v-model="formData[it.name]"
-            />
+            <TextInputPreview v-else-if="it.type === 'Text'" :item="asAny(it)" />
 
             <!-- Number Field -->
-            <NumberInputPreview
-              v-else-if="it.type === 'Number' && it.builder?.type === 'simple_input'"
-              :item="asAny(it)"
-              v-model="formData[it.name]"
-            />
+            <NumberInputPreview v-else-if="it.type === 'Number'" :item="asAny(it)" />
 
             <!-- Radio Field -->
-            <RadioInputPreview
-              v-else-if="it.type === 'Radio' && it.builder?.type === 'simple_choice'"
-              :item="asAny(it)"
-              v-model="formData[it.name]"
-            />
+            <RadioInputPreview v-else-if="it.type === 'Radio'" :item="asAny(it)" />
 
             <!-- Fallback display -->
             <div v-else class="text-xs text-slate-500">Unsupported field type: {{ it.type }}</div>
