@@ -140,99 +140,107 @@ watch(
 </script>
 
 <template>
-  <Card class="w-full flex flex-col rounded-sm justify-start p-6">
-    <CardHeader>
-      <CardTitle class="text-lg font-semibold">Radio</CardTitle>
+  <Card class="w-full flex flex-col rounded-sm justify-start pt-4">
+    <CardHeader class="p-0">
+      <CardTitle class="text-lg font-semibold pl-12">Radio</CardTitle>
+      <hr class="border-gray-300 w-full" />
     </CardHeader>
 
-    <CardContent class="space-y-4">
-      <!-- Name -->
-      <div class="pb-4">
-        <label class="text-sm font-medium text-gray-700"
-          >Name <span class="text-red-600">*</span></label
-        >
-        <Input v-model="fName" placeholder="" />
-        <span v-if="errors.name" class="text-xs text-red-600 mt-1 block">{{ errors.name }}</span>
-      </div>
-
-      <!-- Label -->
-      <div class="pb-4">
-        <label class="text-sm font-medium text-gray-700"
-          >Label <span class="text-red-600">*</span></label
-        >
-        <Input v-model="fLabel" placeholder="" />
-        <span v-if="errors['display.label']" class="text-xs text-red-600 mt-1 block">
-          {{ errors['display.label'] }}
-        </span>
-      </div>
-
-      <!-- Placeholder -->
-      <div class="pb-4">
-        <label class="text-sm font-medium text-gray-700">Placeholder</label>
-        <Input v-model="fPlaceholder" placeholder="" />
-        <span v-if="errors['display.placeholder']" class="text-xs text-red-600 mt-1 block">
-          {{ errors['display.placeholder'] }}
-        </span>
-      </div>
-
-      <!-- Required -->
-      <div class="pb-4 flex items-center gap-2">
-        <input id="required" type="checkbox" v-model="requiredBool" />
-        <label for="required" class="text-sm font-medium text-gray-700">Required</label>
-      </div>
-
-      <!-- Radio Options Section -->
-      <div class="pb-4">
-        <div class="flex items-center justify-between mb-2">
-          <label class="text-sm font-medium text-gray-700">Radio Options</label>
-          <div class="flex items-center gap-2 text-sm text-gray-600"></div>
+    <div class="p-6 pt-0">
+      <CardContent class="space-y-4">
+        <!-- Name -->
+        <div class="pb-4">
+          <label class="text-sm font-medium text-gray-700"
+            >Name <span class="text-red-600">*</span></label
+          >
+          <Input v-model="fName" placeholder="" />
+          <span v-if="errors.name" class="text-xs text-red-600 mt-1 block">{{ errors.name }}</span>
         </div>
 
-        <div class="space-y-2 border rounded-md px-2 pb-2">
-          <div
-            v-for="(opt, index) in options"
-            :key="index"
-            class="grid grid-cols-2 gap-2 pt-2 items-center"
+        <!-- Label -->
+        <div class="pb-4">
+          <label class="text-sm font-medium text-gray-700"
+            >Label <span class="text-red-600">*</span></label
           >
-            <Input v-model="opt.label" class="w-full" placeholder="" />
-            <div class="flex items-center gap-2">
-              <Input v-model="opt.value" class="w-full" placeholder="" />
-              <Button
-                size="icon"
-                variant="secondary"
-                class="h-8 w-8 text-blue-600"
-                @click="addRadio(index)"
-              >
-                +
-              </Button>
-              <Button size="icon" variant="destructive" class="h-8 w-8" @click="removeRadio(index)">
-                −
-              </Button>
+          <Input v-model="fLabel" placeholder="" />
+          <span v-if="errors['display.label']" class="text-xs text-red-600 mt-1 block">
+            {{ errors['display.label'] }}
+          </span>
+        </div>
+
+        <!-- Placeholder -->
+        <div class="pb-4">
+          <label class="text-sm font-medium text-gray-700">Placeholder</label>
+          <Input v-model="fPlaceholder" placeholder="" />
+          <span v-if="errors['display.placeholder']" class="text-xs text-red-600 mt-1 block">
+            {{ errors['display.placeholder'] }}
+          </span>
+        </div>
+
+        <!-- Required -->
+        <div class="pb-4 flex items-center gap-2">
+          <input id="required" type="checkbox" v-model="requiredBool" />
+          <label for="required" class="text-sm font-medium text-gray-700">Required</label>
+        </div>
+
+        <!-- Radio Options Section -->
+        <div class="pb-4">
+          <div class="flex items-center justify-between mb-2">
+            <label class="text-sm font-medium text-gray-700">Radio Options</label>
+            <div class="flex items-center gap-2 text-sm text-gray-600"></div>
+          </div>
+
+          <div class="space-y-2 border rounded-md px-2 pb-2">
+            <div
+              v-for="(opt, index) in options"
+              :key="index"
+              class="grid grid-cols-2 gap-2 pt-2 items-center"
+            >
+              <Input v-model="opt.label" class="w-full" placeholder="" />
+              <div class="flex items-center gap-2">
+                <Input v-model="opt.value" class="w-full" placeholder="" />
+                <Button
+                  size="icon"
+                  variant="secondary"
+                  class="h-8 w-8 text-blue-600"
+                  @click="addRadio(index)"
+                >
+                  +
+                </Button>
+                <Button
+                  size="icon"
+                  variant="destructive"
+                  class="h-8 w-8"
+                  @click="removeRadio(index)"
+                >
+                  −
+                </Button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Layout -->
-      <div class="pb-4">
-        <label class="text-sm font-medium text-gray-700">Layout</label>
-        <select v-model="fLayout" class="border rounded px-3 py-2 text-sm w-full">
-          <option value="Normal">Normal</option>
-          <option value="Compact">Compact</option>
-        </select>
-        <span v-if="errors.layout" class="text-xs text-red-600 mt-1 block">{{
-          errors.layout
-        }}</span>
-      </div>
-    </CardContent>
+        <!-- Layout -->
+        <div class="pb-4">
+          <label class="text-sm font-medium text-gray-700">Layout</label>
+          <select v-model="fLayout" class="border rounded px-3 py-2 text-sm w-full">
+            <option value="Normal">Normal</option>
+            <option value="Compact">Compact</option>
+          </select>
+          <span v-if="errors.layout" class="text-xs text-red-600 mt-1 block">{{
+            errors.layout
+          }}</span>
+        </div>
+      </CardContent>
 
-    <!-- Footer -->
-    <CardFooter class="flex justify-center">
-      <div class="flex gap-2">
-        <Button @click="onSubmit" class="bg-blue-600 text-white hover:bg-blue-700 px-10">
-          Add</Button
-        >
-      </div>
-    </CardFooter>
+      <!-- Footer -->
+      <CardFooter class="flex justify-center">
+        <div class="flex gap-2">
+          <Button @click="onSubmit" class="bg-blue-600 text-white hover:bg-blue-700 px-10">
+            Add</Button
+          >
+        </div>
+      </CardFooter>
+    </div>
   </Card>
 </template>

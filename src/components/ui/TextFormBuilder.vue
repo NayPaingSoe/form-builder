@@ -141,73 +141,78 @@ watch(
 </script>
 
 <template>
-  <Card class="w-full flex flex-col rounded-sm justify-start p-6">
-    <CardHeader>
-      <CardTitle class="text-lg font-semibold">Text</CardTitle>
+  <Card class="w-full flex flex-col rounded-sm justify-start pt-4">
+    <CardHeader class="p-0">
+      <CardTitle class="text-lg font-semibold pl-12">Text</CardTitle>
+      <hr class="border-gray-300 w-full" />
     </CardHeader>
-    <CardContent class="space-y-4 w-full">
-      <div class="pb-4">
-        <label class="text-sm font-medium text-gray-700"
-          >Name <span class="text-red-600">*</span></label
+    <div class="p-6 pt-0">
+      <CardContent class="space-y-4 w-full">
+        <div class="pb-4">
+          <label class="text-sm font-medium text-gray-700"
+            >Name <span class="text-red-600">*</span></label
+          >
+          <Input v-model="fName" placeholder="unique_field_name" />
+          <span v-if="errors.name" class="text-xs text-red-600 mt-1 block">{{ errors.name }}</span>
+        </div>
+
+        <div class="pb-4">
+          <label class="text-sm font-medium text-gray-700"
+            >Label <span class="text-red-600">*</span></label
+          >
+          <Input v-model="fLabel" placeholder="" />
+          <span v-if="errors['display.label']" class="text-xs text-red-600 mt-1 block">
+            {{ errors['display.label'] }}
+          </span>
+        </div>
+
+        <div class="pb-4">
+          <label class="text-sm font-medium text-gray-700">Placeholder</label>
+          <Input v-model="fPlaceholder" placeholder="" />
+          <span v-if="errors['display.placeholder']" class="text-xs text-red-600 mt-1 block">
+            {{ errors['display.placeholder'] }}
+          </span>
+        </div>
+
+        <div class="pb-4">
+          <label class="text-sm font-medium text-gray-700">Predefined Value</label>
+          <Input v-model="fPrefill" placeholder="" />
+          <span v-if="errors['prefill.value']" class="text-xs text-red-600 mt-1 block">
+            {{ errors['prefill.value'] }}
+          </span>
+        </div>
+
+        <div class="pb-4 flex items-center gap-2">
+          <input id="required" type="checkbox" v-model="requiredBool" />
+          <label for="required" class="text-sm font-medium text-gray-700">Required</label>
+        </div>
+
+        <div class="pb-4">
+          <label class="text-sm font-medium text-gray-700">Max Length</label>
+          <Input v-model.number="fMaxlen" type="number" min="1" placeholder="280" />
+          <span v-if="errors['props.maxlength']" class="text-xs text-red-600 mt-1 block">
+            {{ errors['props.maxlength'] }}
+          </span>
+        </div>
+
+        <div class="pb-4">
+          <label class="text-sm font-medium text-gray-700">Layout</label>
+          <select v-model="fLayout" class="border rounded px-3 py-2 text-sm w-full">
+            <option value="Normal">Normal</option>
+            <option value="Compact">Compact</option>
+          </select>
+          <span v-if="errors.layout" class="text-xs text-red-600 mt-1 block">{{
+            errors.layout
+          }}</span>
+        </div>
+      </CardContent>
+
+      <CardFooter class="flex justify-center">
+        <Button @click="onSubmit" class="bg-blue-600 text-white hover:bg-blue-700 px-10"
+          >Add</Button
         >
-        <Input v-model="fName" placeholder="unique_field_name" />
-        <span v-if="errors.name" class="text-xs text-red-600 mt-1 block">{{ errors.name }}</span>
-      </div>
-
-      <div class="pb-4">
-        <label class="text-sm font-medium text-gray-700"
-          >Label <span class="text-red-600">*</span></label
-        >
-        <Input v-model="fLabel" placeholder="" />
-        <span v-if="errors['display.label']" class="text-xs text-red-600 mt-1 block">
-          {{ errors['display.label'] }}
-        </span>
-      </div>
-
-      <div class="pb-4">
-        <label class="text-sm font-medium text-gray-700">Placeholder</label>
-        <Input v-model="fPlaceholder" placeholder="" />
-        <span v-if="errors['display.placeholder']" class="text-xs text-red-600 mt-1 block">
-          {{ errors['display.placeholder'] }}
-        </span>
-      </div>
-
-      <div class="pb-4">
-        <label class="text-sm font-medium text-gray-700">Predefined Value</label>
-        <Input v-model="fPrefill" placeholder="" />
-        <span v-if="errors['prefill.value']" class="text-xs text-red-600 mt-1 block">
-          {{ errors['prefill.value'] }}
-        </span>
-      </div>
-
-      <div class="pb-4 flex items-center gap-2">
-        <input id="required" type="checkbox" v-model="requiredBool" />
-        <label for="required" class="text-sm font-medium text-gray-700">Required</label>
-      </div>
-
-      <div class="pb-4">
-        <label class="text-sm font-medium text-gray-700">Max Length</label>
-        <Input v-model.number="fMaxlen" type="number" min="1" placeholder="280" />
-        <span v-if="errors['props.maxlength']" class="text-xs text-red-600 mt-1 block">
-          {{ errors['props.maxlength'] }}
-        </span>
-      </div>
-
-      <div class="pb-4">
-        <label class="text-sm font-medium text-gray-700">Layout</label>
-        <select v-model="fLayout" class="border rounded px-3 py-2 text-sm w-full">
-          <option value="Normal">Normal</option>
-          <option value="Compact">Compact</option>
-        </select>
-        <span v-if="errors.layout" class="text-xs text-red-600 mt-1 block">{{
-          errors.layout
-        }}</span>
-      </div>
-    </CardContent>
-
-    <CardFooter class="flex justify-center">
-      <Button @click="onSubmit" class="bg-blue-600 text-white hover:bg-blue-700 px-10">Add</Button>
-    </CardFooter>
+      </CardFooter>
+    </div>
   </Card>
   <pre></pre>
 </template>

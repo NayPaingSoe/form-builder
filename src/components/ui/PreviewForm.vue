@@ -80,48 +80,51 @@ function isRequired(item: FormItem) {
 </script>
 
 <template>
-  <Card class="w-full flex flex-col rounded-sm justify-start p-6 min-h-[90vh]">
-    <CardHeader>
-      <CardTitle class="text-lg font-semibold pl-1">Preview Form</CardTitle>
+  <Card class="w-full flex flex-col rounded-sm justify-start pt-4 min-h-[90vh]">
+    <CardHeader class="p-0">
+      <CardTitle class="text-lg font-semibold pl-12">Preview Form</CardTitle>
+      <hr class="border-gray-300 w-full" />
     </CardHeader>
-    <CardContent class="space-y-6 w-full">
-      <VueDraggable v-model="store.items">
-        <div v-for="it in items" :key="it.name" class="space-y-2">
-          <!-- Text Field -->
-          <TextInputPreview
-            v-if="it.type === 'Text'"
-            :item="it"
-            type="builder"
-            v-model="formData[it.name]"
-          />
+    <div class="p-6 pt-0">
+      <CardContent class="space-y-6 w-full">
+        <VueDraggable v-model="store.items">
+          <div v-for="it in items" :key="it.name" class="space-y-2">
+            <!-- Text Field -->
+            <TextInputPreview
+              v-if="it.type === 'Text'"
+              :item="it"
+              type="builder"
+              v-model="formData[it.name]"
+            />
 
-          <!-- Number Field -->
-          <NumberInputPreview
-            v-else-if="it.type === 'Number' && it.builder?.type === 'simple_input'"
-            :item="it"
-            v-model="formData[it.name]"
-          />
+            <!-- Number Field -->
+            <NumberInputPreview
+              v-else-if="it.type === 'Number' && it.builder?.type === 'simple_input'"
+              :item="it"
+              v-model="formData[it.name]"
+            />
 
-          <!-- Radio Field -->
-          <RadioInputPreview
-            v-else-if="it.type === 'Radio' && it.builder?.type === 'simple_choice'"
-            :item="it"
-            v-model="formData[it.name]"
-          />
+            <!-- Radio Field -->
+            <RadioInputPreview
+              v-else-if="it.type === 'Radio' && it.builder?.type === 'simple_choice'"
+              :item="it"
+              v-model="formData[it.name]"
+            />
 
-          <!-- Fallback display -->
-          <div v-else class="text-xs text-gray-500">Unsupported field type: {{ it.type }}</div>
-        </div>
-      </VueDraggable>
-    </CardContent>
+            <!-- Fallback display -->
+            <div v-else class="text-xs text-gray-500">Unsupported field type: {{ it.type }}</div>
+          </div>
+        </VueDraggable>
+      </CardContent>
 
-    <CardFooter class="flex justify-between pt-4">
-      <Button
-        v-if="items.length"
-        class="bg-blue-600 text-white hover:bg-blue-700"
-        @click="() => router.push({ name: 'renderer' })"
-        >Open Form Render</Button
-      >
-    </CardFooter>
+      <CardFooter class="flex justify-between pt-4">
+        <Button
+          v-if="items.length"
+          class="bg-blue-600 text-white hover:bg-blue-700"
+          @click="() => router.push({ name: 'renderer' })"
+          >Open Form Render</Button
+        >
+      </CardFooter>
+    </div>
   </Card>
 </template>
