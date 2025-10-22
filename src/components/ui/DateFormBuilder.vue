@@ -54,6 +54,7 @@ const onSubmit = handleSubmit((values) => {
   if (idx >= 0) {
     store.applyEditText(updated)
     toast.success('Success', { description: 'Date Field has been updated' })
+    resetFormInputs()
   } else {
     store.addItem(updated)
     toast.success('Success', { description: 'Date Field has been created' })

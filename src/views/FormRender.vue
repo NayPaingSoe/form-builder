@@ -9,10 +9,39 @@ import * as yup from 'yup'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/yup'
 import { toast } from 'vue-sonner'
+import type { DateValue } from '@internationalized/date'
+import { DateFormatter, getLocalTimeZone } from '@internationalized/date'
+import { CalendarIcon } from 'lucide-vue-next'
+import { Calendar } from '@/components/ui/calendar'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { cn } from '@/lib/utils'
 
 const store = useFormBuilderStore()
 
 const items = computed(() => store.items)
+
+// Date picker state and helpers
+const df = new DateFormatter('en-US', { dateStyle: 'long' })
+const dateValues = ref<Record<string, DateValue | undefined>>({})
+
+function formatYYYYMMDD(d: Date): string {
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
+function onDateChange(name: string, val: DateValue | undefined) {
+  dateValues.value[name] = val
+  const d = val ? val.toDate(getLocalTimeZone()) : null
+  ;(fields.value as Record<string, string>)[name] = d ? formatYYYYMMDD(d) : ''
+}
+
+function formatDateLabel(name: string): string {
+  const v = dateValues.value[name]
+  if (!v) return 'Pick a date'
+  return df.format(v.toDate(getLocalTimeZone()))
+}
 
 function getInitialValues(items: inputsFieldsT[]) {
   const values: Record<string, string | number | boolean> = {}
@@ -89,12 +118,16 @@ watch(
   items,
   (newItems) => {
     const next: Record<string, any> = {}
+    const nextDates: Record<string, DateValue | undefined> = {}
     for (const field of newItems) {
       if (!field?.name) continue
       const [inputRef] = defineField(field.name as any)
       next[field.name] = inputRef
+      // Keep any existing date selections; otherwise undefined
+      nextDates[field.name] = dateValues.value[field.name]
     }
     fields.value = next
+    dateValues.value = nextDates
     setValues(getInitialValues(newItems))
   },
   { immediate: true, deep: true },
@@ -193,13 +226,31 @@ function getError(name: string): string | undefined {
               {{ item.display?.label }}
               <span v-if="item.rule === 'required'" class="text-red-600"> *</span>
             </label>
-            <Input
-              @update:modelValue="fields[item.name] = $event"
-              :modelValue="fields[item.name]"
-              type="date"
-              :placeholder="item.display?.placeholder"
-              class="h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400"
-            />
+            <div class="flex items-center gap-2">
+              <Popover>
+                <PopoverTrigger as-child>
+                  <Button
+                    variant="outline"
+                    :class="
+                      cn(
+                        'h-9 w-full justify-start text-left font-normal',
+                        !dateValues[item.name] && 'text-slate-400',
+                      )
+                    "
+                  >
+                    <CalendarIcon class="mr-2 h-4 w-4" />
+                    {{ formatDateLabel(item.name) }}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent class="w-auto p-0">
+                  <Calendar
+                    :modelValue="dateValues[item.name]"
+                    @update:modelValue="(val) => onDateChange(item.name, val)"
+                    initial-focus
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
             <p v-if="getError(item.name)" class="text-xs text-rose-600">
               {{ getError(item.name) }}
             </p>
