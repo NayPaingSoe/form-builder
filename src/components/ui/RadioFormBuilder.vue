@@ -20,7 +20,7 @@ const radioInputFields = ref<RadioFieldInputsT>({
   name: '',
   display: { label: '', placeholder: '' },
   // rule toggled via computed
-  enum: [] as unknown as RadioFieldInputsT['enum'],
+  enum: [],
   builder: { type: 'simple_choice' },
   layout: 'Normal',
   type: 'Radio',
@@ -48,13 +48,13 @@ const radioSchema = yup.object({
   builder: yup.object({ type: yup.string().required() }),
   layout: yup.mixed<'Normal' | 'Compact'>().oneOf(['Normal', 'Compact']).required(),
   type: yup.string().oneOf(['Radio']).required(),
-}) as yup.ObjectSchema<Required<Omit<RadioFieldInputsT, 'enum'>>>
+})
 
 const { errors, handleSubmit, defineField, setValues, resetForm } = useForm<
   Required<Omit<RadioFieldInputsT, 'enum'>>
 >({
   validationSchema: toTypedSchema(radioSchema),
-  initialValues: radioInputFields.value as Required<Omit<RadioFieldInputsT, 'enum'>>,
+  initialValues: radioInputFields.value,
 })
 
 const [fName] = defineField('name')
@@ -71,7 +71,7 @@ const onSubmit = handleSubmit((values) => {
   const targetName =
     store.isEditingText && store.editingItemName ? store.editingItemName : values.name || 'field'
   const updated: RadioFieldInputsT = {
-    ...(values as RadioFieldInputsT),
+    ...values,
     name: targetName,
     enum: options.value.map((o) => ({
       label: o.label,
@@ -103,7 +103,7 @@ function resetFormInputs() {
       builder: { type: 'simple_choice' },
       layout: 'Normal',
       type: 'Radio',
-    } as Required<Omit<RadioFieldInputsT, 'enum'>>,
+    },
   })
   options.value = [{ label: 'First Choice', value: 'first_choice' }]
 }
@@ -121,6 +121,7 @@ watch(
     if (!editing || !draft) return
     const sel = store.selectedField.value
     if (sel !== 'radio') return
+
     const { name, display, enum: dEnum, builder, layout, rule } = draft
     setValues({
       name: name || '',
@@ -129,8 +130,8 @@ watch(
       builder: { type: builder?.type || 'simple_choice' },
       layout: (layout as 'Normal' | 'Compact') || 'Normal',
       type: 'Radio',
-    } as Required<Omit<RadioFieldInputsT, 'enum'>>)
-    // map enum to options list for editing UI
+    })
+
     options.value = (dEnum?.map((o) => ({ label: o.label || '', value: o.value || '' })) ||
       []) as RadioOption[]
   },
@@ -139,9 +140,13 @@ watch(
 </script>
 
 <template>
-  <Card class="w-full flex flex-col justify-start pt-4 border border-slate-200/70 bg-white/70 shadow-sm rounded-xl backdrop-blur">
+  <Card
+    class="w-full flex flex-col justify-start pt-4 border border-slate-200/70 bg-white/70 shadow-sm rounded-xl backdrop-blur"
+  >
     <CardHeader class="p-0">
-      <CardTitle class="text-base md:text-lg font-semibold tracking-tight text-slate-900 pl-12">Radio</CardTitle>
+      <CardTitle class="text-base md:text-lg font-semibold tracking-tight text-slate-900 pl-12"
+        >Radio</CardTitle
+      >
       <hr class="border-slate-200/70 w-full" />
     </CardHeader>
 
@@ -152,7 +157,11 @@ watch(
           <label class="text-xs font-medium text-slate-600 mb-2 block"
             >Name <span class="text-red-600">*</span></label
           >
-          <Input v-model="fName" placeholder="unique_field_name" class="h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400" />
+          <Input
+            v-model="fName"
+            placeholder="unique_field_name"
+            class="h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400"
+          />
           <span v-if="errors.name" class="text-xs text-rose-600 mt-1 block">{{ errors.name }}</span>
         </div>
 
@@ -161,7 +170,11 @@ watch(
           <label class="text-xs font-medium text-slate-600 mb-2 block"
             >Label <span class="text-red-600">*</span></label
           >
-          <Input v-model="fLabel" placeholder="" class="h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400" />
+          <Input
+            v-model="fLabel"
+            placeholder=""
+            class="h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400"
+          />
           <span v-if="errors['display.label']" class="text-xs text-rose-600 mt-1 block">
             {{ errors['display.label'] }}
           </span>
@@ -170,7 +183,11 @@ watch(
         <!-- Placeholder -->
         <div class="pb-4">
           <label class="text-xs font-medium text-slate-600 mb-2 block">Placeholder</label>
-          <Input v-model="fPlaceholder" placeholder="" class="h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400" />
+          <Input
+            v-model="fPlaceholder"
+            placeholder=""
+            class="h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400"
+          />
           <span v-if="errors['display.placeholder']" class="text-xs text-rose-600 mt-1 block">
             {{ errors['display.placeholder'] }}
           </span>
@@ -178,7 +195,12 @@ watch(
 
         <!-- Required -->
         <div class="pb-4 flex items-center gap-2">
-          <input id="required" type="checkbox" v-model="requiredBool" class="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-2 focus:ring-slate-400" />
+          <input
+            id="required"
+            type="checkbox"
+            v-model="requiredBool"
+            class="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-2 focus:ring-slate-400"
+          />
           <label for="required" class="text-sm font-medium text-slate-700">Required</label>
         </div>
 
@@ -195,9 +217,17 @@ watch(
               :key="index"
               class="grid grid-cols-2 gap-2 pt-2 items-center"
             >
-              <Input v-model="opt.label" class="w-full h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400" placeholder="" />
+              <Input
+                v-model="opt.label"
+                class="w-full h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400"
+                placeholder=""
+              />
               <div class="flex items-center gap-2">
-                <Input v-model="opt.value" class="w-full h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400" placeholder="" />
+                <Input
+                  v-model="opt.value"
+                  class="w-full h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400"
+                  placeholder=""
+                />
                 <Button
                   size="icon"
                   variant="secondary"
@@ -222,7 +252,10 @@ watch(
         <!-- Layout -->
         <div class="pb-4">
           <label class="text-xs font-medium text-slate-600 mb-2 block">Layout</label>
-          <select v-model="fLayout" class="w-full h-9 rounded-md bg-white/80 border border-slate-200 px-3 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400">
+          <select
+            v-model="fLayout"
+            class="w-full h-9 rounded-md bg-white/80 border border-slate-200 px-3 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400"
+          >
             <option value="Normal">Normal</option>
             <option value="Compact">Compact</option>
           </select>
@@ -235,7 +268,10 @@ watch(
       <!-- Footer -->
       <CardFooter class="flex justify-end">
         <div class="flex gap-2">
-          <Button @click="onSubmit" class="h-9 px-6 rounded-md bg-slate-900 text-white hover:bg-slate-800 shadow-sm ring-1 ring-slate-900/10">
+          <Button
+            @click="onSubmit"
+            class="h-9 px-6 rounded-md bg-slate-900 text-white hover:bg-slate-800 shadow-sm ring-1 ring-slate-900/10"
+          >
             {{ store.isEditingText ? 'Update' : 'Add' }}
           </Button>
         </div>

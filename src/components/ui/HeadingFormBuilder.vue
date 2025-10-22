@@ -57,6 +57,7 @@ watch(
     if (!editing || !draft) return
     const sel = store.selectedField.value
     if (sel !== 'heading') return
+
     setValues({
       name: draft?.name || '',
       label: draft?.display?.label || '',
@@ -67,9 +68,13 @@ watch(
 </script>
 
 <template>
-  <Card class="w-full flex flex-col justify-start pt-4 min-h-[90vh] border border-slate-200/70 bg-white/70 shadow-sm rounded-xl backdrop-blur">
+  <Card
+    class="w-full flex flex-col justify-start pt-4 min-h-[90vh] border border-slate-200/70 bg-white/70 shadow-sm rounded-xl backdrop-blur"
+  >
     <CardHeader class="p-0">
-      <CardTitle class="text-base md:text-lg font-semibold tracking-tight text-slate-900 pl-12">Heading</CardTitle>
+      <CardTitle class="text-base md:text-lg font-semibold tracking-tight text-slate-900 pl-12"
+        >Heading</CardTitle
+      >
       <hr class="border-slate-200/70 w-full" />
     </CardHeader>
     <div class="p-6 pt-0">
@@ -78,7 +83,11 @@ watch(
           <label class="text-xs font-medium text-slate-600 mb-2 block"
             >Name <span class="text-red-600">*</span></label
           >
-          <Input v-model="fName" placeholder="unique_field_name" class="h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400" />
+          <Input
+            v-model="fName"
+            placeholder="unique_field_name"
+            class="h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400"
+          />
           <span v-if="errors.name" class="text-xs text-rose-600 mt-1 block">{{ errors.name }}</span>
         </div>
 
@@ -86,7 +95,11 @@ watch(
           <label class="text-xs font-medium text-slate-600 mb-2 block"
             >Label <span class="text-red-600">*</span></label
           >
-          <Input v-model="fLabel" placeholder="" class="h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400" />
+          <Input
+            v-model="fLabel"
+            placeholder=""
+            class="h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400"
+          />
           <span v-if="errors.label" class="text-xs text-rose-600 mt-1 block">{{
             errors.label
           }}</span>
@@ -94,7 +107,10 @@ watch(
       </CardContent>
 
       <CardFooter class="flex justify-end pt-4">
-        <Button @click="onSubmit" class="h-9 px-6 rounded-md bg-slate-900 text-white hover:bg-slate-800 shadow-sm ring-1 ring-slate-900/10">
+        <Button
+          @click="onSubmit"
+          class="h-9 px-6 rounded-md bg-slate-900 text-white hover:bg-slate-800 shadow-sm ring-1 ring-slate-900/10"
+        >
           {{ store.isEditingText ? 'Update' : 'Add' }}
         </Button>
       </CardFooter>

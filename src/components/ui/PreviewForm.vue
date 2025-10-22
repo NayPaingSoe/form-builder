@@ -14,11 +14,7 @@ import type { inputsFieldsT } from '@/lib/types'
 const store = useFormBuilderStore()
 const router = useRouter()
 
-const items = computed<inputsFieldsT[]>(() => (store.items as unknown as inputsFieldsT[]) || [])
-
-function isRequired(item: inputsFieldsT) {
-  return item?.rule === 'required'
-}
+const items = computed(() => (store.items || []) as inputsFieldsT[])
 </script>
 
 <template>

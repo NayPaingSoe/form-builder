@@ -21,9 +21,8 @@ export default defineConfigWithVueTs(
   skipFormatting,
   {
     rules: {
-      // ✅ Allow using "any" without error
-      // '@typescript-eslint/no-explicit-any': 'off',
-
+      // Allow using "any" without error
+      '@typescript-eslint/no-explicit-any': 'off',
       // (Optional) also relax some strictness
       '@typescript-eslint/ban-ts-comment': 'off',
       '@typescript-eslint/no-unused-vars': 'off',

@@ -13,14 +13,11 @@ import { toast } from 'vue-sonner'
 // --- Store ---
 const store = useFormBuilderStore()
 
-function getError(name: string): string | undefined {
-  return (errors as any)[name] as string | undefined
-}
 const items = computed<inputsFieldsT[]>(() => (store.items as inputsFieldsT[]) || [])
 
 // --- Helpers ---
 function getInitialValues(items: inputsFieldsT[]) {
-  const values: Record<string, any> = {}
+  const values: Record<string, string | number | boolean> = {}
   for (const field of items) {
     if (!field?.name) continue
     const prefill = field.prefill?.value
@@ -29,7 +26,7 @@ function getInitialValues(items: inputsFieldsT[]) {
         values[field.name] = prefill ?? ''
         break
       case 'Number':
-        values[field.name] = prefill ?? undefined
+        values[field.name] = prefill ?? ''
         break
       default:
         values[field.name] = prefill ?? ''
@@ -49,7 +46,7 @@ const validationSchema = computed(() => {
     if (field.type === 'Text') {
       let schema = yup.string()
       if (field.rule === 'required') schema = schema.required('This field is required')
-      const max = (field.props as any)?.maxlength
+      const max = (field.props as unknown as { maxlength: number })?.maxlength
       if (max) schema = schema.max(max, `Must be at most ${max} characters`)
       shape[field.name] = schema
     }
@@ -58,20 +55,18 @@ const validationSchema = computed(() => {
     if (field.type === 'Number') {
       let schema = yup.number().typeError('Must be a number')
       if (field.rule === 'required') schema = schema.required('This field is required')
-
       const vc = field.value_constraints
       if (vc?.minimum !== undefined) schema = schema.min(vc.minimum, `Minimum is ${vc.minimum}`)
-      if (vc?.maximum !== undefined && typeof vc.maximum === 'number')
-        schema = schema.max(vc.maximum, `Maximum is ${vc.maximum}`)
+      if (vc?.maximum !== undefined)
+        schema = schema.max(vc.maximum as number, `Maximum is ${vc.maximum}`)
       if (!vc?.allow_decimal) schema = schema.integer('Must be an integer')
-
       shape[field.name] = schema
     }
 
     // Radio
     if (field.type === 'Radio') {
-      const options = (field.enum || []).map((o: any) => o.value)
-      let schema = yup.mixed().oneOf(options, 'Invalid option')
+      const options = (field.enum as { value: string; label: string }[]).map((o) => o.value)
+      let schema = yup.mixed().oneOf(options, 'This field is required')
       if (field.rule === 'required') schema = schema.required('This field is required')
       shape[field.name] = schema
     }
@@ -87,17 +82,19 @@ const { errors, handleSubmit, values, setValues, defineField } = useForm({
 })
 
 // --- Field Registration ---
-const fields = ref<Record<string, any>>({})
+const fields = ref<Record<string, string | number | boolean>>({})
 watch(
   items,
   (newItems) => {
-    const next: Record<string, any> = {}
+    console.log('initialValue', getInitialValues(items.value))
+    const next: Record<string, string | number | boolean> = {}
     for (const field of newItems) {
       if (!field?.name) continue
       const [inputRef] = defineField(field.name as any)
       next[field.name] = inputRef
     }
     fields.value = next
+    console.log('fields', fields)
     setValues(getInitialValues(newItems))
   },
   { immediate: true, deep: true },
@@ -134,13 +131,12 @@ const onSubmit = handleSubmit((vals) => {
               <span v-if="item.rule === 'required'" class="text-red-600"> *</span>
             </label>
             <Input
-              v-model="fields[item.name]"
+              @update:modelValue="fields[item.name] = $event"
               :placeholder="item.display?.placeholder"
-              :maxlength="item.props?.maxlength"
               class="h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400"
             />
-            <p v-if="getError(item.name)" class="text-xs text-rose-600">
-              {{ getError(item.name) }}
+            <p v-if="errors[item.name]" class="text-xs text-rose-600">
+              {{ errors[item.name] }}
             </p>
           </div>
 
@@ -151,15 +147,15 @@ const onSubmit = handleSubmit((vals) => {
               <span v-if="item.rule === 'required'" class="text-red-600"> *</span>
             </label>
             <Input
-              v-model.number="fields[item.name]"
+              @update:modelValue="fields[item.name] = $event"
               type="number"
               :placeholder="item.display?.placeholder"
               :max="item.value_constraints?.maximum"
               :step="item.value_constraints?.allow_decimal ? 'any' : 1"
               class="h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400"
             />
-            <p v-if="getError(item.name)" class="text-xs text-rose-600">
-              {{ getError(item.name) }}
+            <p v-if="errors[item.name]" class="text-xs text-rose-600">
+              {{ errors[item.name] }}
             </p>
           </div>
 
@@ -181,8 +177,8 @@ const onSubmit = handleSubmit((vals) => {
                 <span class="text-sm text-slate-700 pl-2">{{ opt.label }}</span>
               </label>
             </div>
-            <p v-if="getError(item.name)" class="text-xs text-rose-600">
-              {{ getError(item.name) }}
+            <p v-if="errors[item.name]" class="text-xs text-rose-600">
+              {{ errors[item.name] }}
             </p>
           </div>
         </div>
@@ -196,7 +192,7 @@ const onSubmit = handleSubmit((vals) => {
         >
           Submit Form
         </Button>
-        <!-- <pre>{{ values }}</pre> -->
+        <!-- <pre>{{ validationSchema }}</pre> -->
       </CardFooter>
     </div>
   </Card>
