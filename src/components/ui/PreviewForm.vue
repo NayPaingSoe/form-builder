@@ -9,56 +9,15 @@ import NumberInputPreview from '@/components/ui/NumberInputPreview.vue'
 import RadioInputPreview from '@/components/ui/RadioInputPreview.vue'
 import { VueDraggable } from 'vue-draggable-plus'
 import HeadingInputPreview from '@/components/ui/HeadingInputPreview.vue'
-
-// Types for items in the builder store
-interface DisplayConf {
-  label?: string
-  placeholder?: string
-}
-interface PropsConf {
-  maxlength?: number
-}
-interface PrefillConf {
-  value?: unknown
-}
-interface BuilderConf {
-  type?: string
-}
-interface NumberConstraints {
-  maximum?: number
-  allow_decimal?: number
-}
-interface EnumOption {
-  label: string
-  value: string
-}
-type FieldType = 'Text' | 'Number' | 'Radio' | 'Heading'
-interface FormItem {
-  name: string
-  display?: DisplayConf
-  rule?: string
-  props?: PropsConf
-  prefill?: PrefillConf
-  visible?: Record<string, string>
-  builder?: BuilderConf
-  layout?: string
-  type: FieldType
-  value_constraints?: NumberConstraints
-  enum?: EnumOption[]
-}
+import type { inputsFieldsT } from '@/lib/types'
 
 const store = useFormBuilderStore()
 const router = useRouter()
 
-const items = computed<FormItem[]>(() => (store.items as unknown as FormItem[]) || [])
+const items = computed<inputsFieldsT[]>(() => (store.items as unknown as inputsFieldsT[]) || [])
 
-function isRequired(item: FormItem) {
+function isRequired(item: inputsFieldsT) {
   return item?.rule === 'required'
-}
-
-// Helper to relax types for child preview components in template
-function asAny<T>(v: T): any {
-  return v as any
 }
 </script>
 
@@ -75,20 +34,20 @@ function asAny<T>(v: T): any {
     <div class="p-6 pt-0">
       <CardContent class="space-y-6 w-full max-w-2xl mx-auto">
         <VueDraggable v-model="store.items">
-          <div v-for="it in items" :key="it.name" class="space-y-2">
+          <div v-for="item in items" :key="item.name" class="space-y-2">
             <!-- Heading -->
-            <HeadingInputPreview v-if="it.type === 'Heading'" :item="asAny(it)" />
+            <HeadingInputPreview v-if="item.type === 'Heading'" :item="item" />
             <!-- Text Field -->
-            <TextInputPreview v-else-if="it.type === 'Text'" :item="asAny(it)" />
+            <TextInputPreview v-else-if="item.type === 'Text'" :item="item" />
 
             <!-- Number Field -->
-            <NumberInputPreview v-else-if="it.type === 'Number'" :item="asAny(it)" />
+            <NumberInputPreview v-else-if="item.type === 'Number'" :item="item" />
 
             <!-- Radio Field -->
-            <RadioInputPreview v-else-if="it.type === 'Radio'" :item="asAny(it)" />
+            <RadioInputPreview v-else-if="item.type === 'Radio'" :item="item" />
 
             <!-- Fallback display -->
-            <div v-else class="text-xs text-slate-500">Unsupported field type: {{ it.type }}</div>
+            <div v-else class="text-xs text-slate-500">Unsupported field type: {{ item.type }}</div>
           </div>
         </VueDraggable>
       </CardContent>

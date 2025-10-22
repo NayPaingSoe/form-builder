@@ -4,10 +4,10 @@ import { Button } from '@/components/ui/button'
 
 import { useFormBuilderStore } from '@/stores/form_builder'
 import { toast } from 'vue-sonner'
-import type { TextFieldInputsT } from '@/lib/types'
+import type { inputsFieldsT } from '@/lib/types'
 
 const { item } = defineProps<{
-  item: TextFieldInputsT
+  item: inputsFieldsT
 }>()
 
 const store = useFormBuilderStore()

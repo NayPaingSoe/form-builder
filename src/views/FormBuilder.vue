@@ -44,7 +44,6 @@ import RadioFormBuilder from '@/components/ui/RadioFormBuilder.vue'
 import NumberFormBuilder from '@/components/ui/NumberFormBuilder.vue'
 import HeadingFormBuilder from '@/components/ui/HeadingFormBuilder.vue'
 import { useFormBuilderStore } from '@/stores/form_builder'
-import { Heading } from 'lucide-vue-next'
 const fields = [
   { label: 'Heading', value: 'heading' },
   { label: 'Text', value: 'text' },
