@@ -32,6 +32,7 @@ async function editFiled() {
     </div>
     <div class="flex gap-2">
       <Input
+        :modelValue="item.prefill?.value"
         :placeholder="item.display?.placeholder"
         :maxlength="item.props?.maxlength"
         :required="item.rule === 'required'"

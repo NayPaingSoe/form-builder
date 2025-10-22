@@ -30,6 +30,7 @@ function editField() {
     </div>
     <div class="flex gap-2">
       <Input
+        :modelValue="item.prefill?.value"
         :placeholder="item.display?.placeholder"
         :required="item.rule === 'required'"
         type="number"
