@@ -8,6 +8,7 @@ import TextInputPreview from '@/components/ui/TextInputPreview.vue'
 import NumberInputPreview from '@/components/ui/NumberInputPreview.vue'
 import RadioInputPreview from '@/components/ui/RadioInputPreview.vue'
 import { VueDraggable } from 'vue-draggable-plus'
+import HeadingInputPreview from '@/components/ui/HeadingInputPreview.vue'
 
 // Types for items in the builder store
 interface DisplayConf {
@@ -90,9 +91,7 @@ function isRequired(item: FormItem) {
         <VueDraggable v-model="store.items">
           <div v-for="it in items" :key="it.name" class="space-y-2">
             <!-- Heading -->
-            <div v-if="it.type === 'Heading'" class="py-4">
-              <p class="text-lg font-semibold!">{{ it.display?.label }}</p>
-            </div>
+            <HeadingInputPreview v-if="it.type === 'Heading'" :item="it" />
             <!-- Text Field -->
             <TextInputPreview
               v-else-if="it.type === 'Text'"
@@ -126,9 +125,12 @@ function isRequired(item: FormItem) {
           v-if="items.length"
           class="bg-blue-600 text-white hover:bg-blue-700"
           @click="() => router.push({ name: 'renderer' })"
-          >Open Form Render</Button
+          >Preview User Form</Button
         >
       </CardFooter>
     </div>
+    <pre>
+  <!-- {{ store }} -->
+</pre>
   </Card>
 </template>

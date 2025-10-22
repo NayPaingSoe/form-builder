@@ -153,7 +153,7 @@ watch(
           <label class="text-sm font-medium text-gray-700"
             >Name <span class="text-red-600">*</span></label
           >
-          <Input v-model="fName" placeholder="" />
+          <Input v-model="fName" placeholder="unique_field_name" />
           <span v-if="errors.name" class="text-xs text-red-600 mt-1 block">{{ errors.name }}</span>
         </div>
 
@@ -237,8 +237,8 @@ watch(
       <CardFooter class="flex justify-center">
         <div class="flex gap-2">
           <Button @click="onSubmit" class="bg-blue-600 text-white hover:bg-blue-700 px-10">
-            Add</Button
-          >
+            {{ store.isEditingText ? 'Update' : 'Add' }}
+          </Button>
         </div>
       </CardFooter>
     </div>

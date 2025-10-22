@@ -10,7 +10,7 @@
           :key="i"
           variant="outline"
           class="w-full"
-          @click="store.setSelectedField(field)"
+          @click="selectFieldHandler(field)"
         >
           {{ field.label }}
         </Button>
@@ -49,6 +49,11 @@ const fields = [
 ]
 
 const store = useFormBuilderStore()
+
+function selectFieldHandler(field: { label: string; value: string }) {
+  store.setSelectedField(field)
+  store.cancelEditText()
+}
 </script>
 
 <style scoped>

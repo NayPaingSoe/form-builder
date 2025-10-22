@@ -221,9 +221,9 @@ watch(
       </CardContent>
 
       <CardFooter class="flex justify-center">
-        <Button @click="onSubmit" class="bg-blue-600 text-white hover:bg-blue-700 px-10"
-          >Add</Button
-        >
+        <Button @click="onSubmit" class="bg-blue-600 text-white hover:bg-blue-700 px-10">
+          {{ store.isEditingText ? 'Update' : 'Add' }}
+        </Button>
       </CardFooter>
     </div>
   </Card>
