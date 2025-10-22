@@ -68,11 +68,11 @@ const { errors, handleSubmit, values, setValues, defineField } = useForm({
   initialValues: getInitialValues(items.value),
 })
 
-const fields = ref<Record<string, string | number | boolean>>({})
+const fields = ref<Record<string, any>>({})
 watch(
   items,
   (newItems) => {
-    const next: Record<string, string | number | boolean> = {}
+    const next: Record<string, any> = {}
     for (const field of newItems) {
       if (!field?.name) continue
       const [inputRef] = defineField(field.name as any)
@@ -87,6 +87,9 @@ watch(
 const onSubmit = handleSubmit((vals) => {
   toast.success('Submitted values', { description: JSON.stringify(vals) })
 })
+function getError(name: string): string | undefined {
+  return (errors as any)[name] as string | undefined
+}
 </script>
 
 <template>
@@ -120,8 +123,8 @@ const onSubmit = handleSubmit((vals) => {
               :placeholder="item.display?.placeholder"
               class="h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400"
             />
-            <p v-if="errors[item.name]" class="text-xs text-rose-600">
-              {{ errors[item.name] }}
+            <p v-if="getError(item.name)" class="text-xs text-rose-600">
+              {{ getError(item.name) }}
             </p>
           </div>
 
@@ -140,8 +143,8 @@ const onSubmit = handleSubmit((vals) => {
               :step="item.value_constraints?.allow_decimal ? 'any' : 1"
               class="h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400"
             />
-            <p v-if="errors[item.name]" class="text-xs text-rose-600">
-              {{ errors[item.name] }}
+            <p v-if="getError(item.name)" class="text-xs text-rose-600">
+              {{ getError(item.name) }}
             </p>
           </div>
 
@@ -163,8 +166,8 @@ const onSubmit = handleSubmit((vals) => {
                 <span class="text-sm text-slate-700 pl-2">{{ opt.label }}</span>
               </label>
             </div>
-            <p v-if="errors[item.name]" class="text-xs text-rose-600">
-              {{ errors[item.name] }}
+            <p v-if="getError(item.name)" class="text-xs text-rose-600">
+              {{ getError(item.name) }}
             </p>
           </div>
         </div>
