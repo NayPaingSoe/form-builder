@@ -8,6 +8,7 @@ import type { inputsFieldsT } from '@/lib/types'
 import * as yup from 'yup'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/yup'
+import { toast } from 'vue-sonner'
 
 // --- Store ---
 const store = useFormBuilderStore()
@@ -99,7 +100,7 @@ watch(
 
 // --- Submit ---
 const onSubmit = handleSubmit((vals) => {
-  console.log('Submit values:', vals)
+  toast.success('Submitted values', { description: JSON.stringify(vals) })
 })
 </script>
 
