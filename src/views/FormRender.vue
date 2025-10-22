@@ -20,6 +20,9 @@ const store = useFormBuilderStore()
 
 const items = computed(() => store.items)
 
+const formName = computed(() => {
+  return items.value.find((it) => it.type === 'Heading')
+})
 const df = new DateFormatter('en-US', { dateStyle: 'long' })
 const dateValues = ref<Record<string, DateValue | undefined>>({})
 
@@ -138,7 +141,14 @@ watch(
 )
 
 const onSubmit = handleSubmit((vals) => {
-  toast.success('Submitted values', { description: JSON.stringify(vals) })
+  const temp = {
+    name: formName.value?.name,
+    label: formName.value?.display?.label,
+    items: {
+      ...vals,
+    },
+  }
+  toast.success('Submitted values', { description: JSON.stringify(temp) })
 })
 function getError(name: string): string | undefined {
   return (errors as any).value[name] as string | undefined
