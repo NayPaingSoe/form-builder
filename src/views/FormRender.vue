@@ -149,7 +149,7 @@ const onSubmit = handleSubmit((vals) => {
               :max="item.value_constraints?.maximum"
               :step="item.value_constraints?.allow_decimal ? 'any' : 1"
             />
-            <p v-if="errors[item.name]" class="text-xs text-red-600">{{ errors[item.name] }}</p>
+            <p v-if="getError(item.name)" class="text-xs text-red-600">{{ getError(item.name) }}</p>
           </div>
 
           <!-- Radio -->
@@ -169,7 +169,7 @@ const onSubmit = handleSubmit((vals) => {
                 <span class="text-sm pl-2">{{ opt.label }}</span>
               </label>
             </div>
-            <p v-if="errors[item.name]" class="text-xs text-red-600">{{ errors[item.name] }}</p>
+            <p v-if="getError(item.name)" class="text-xs text-red-600">{{ getError(item.name) }}</p>
           </div>
         </div>
       </CardContent>
