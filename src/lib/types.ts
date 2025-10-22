@@ -15,7 +15,7 @@ export interface inputsFieldsT {
   prefill?: { value?: string | number | '' }
   builder: { type: string }
   visible?: {
-    duration: string
+    duration: number | undefined
   }
   layout: 'Normal' | 'Compact'
   type: string
@@ -45,7 +45,7 @@ export interface NumberFieldInputsT {
     allow_decimal: number
   }
   visible: {
-    duration: string
+    duration: number | undefined
   }
   builder: {
     type: string

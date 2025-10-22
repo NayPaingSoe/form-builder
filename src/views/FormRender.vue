@@ -82,7 +82,13 @@ const validationSchema = computed(() => {
       if (vc?.minimum !== undefined) schema = schema.min(vc.minimum, `Minimum is ${vc.minimum}`)
       if (vc?.maximum !== undefined)
         schema = schema.max(vc.maximum as number, `Maximum is ${vc.maximum}`)
-      if (!vc?.allow_decimal) schema = schema.integer('Must be an integer')
+      console.log('vc?.allow_decimal', vc?.allow_decimal) //if allow_decimal is 0 then integer else float
+      if (vc?.allow_decimal === 0)
+        schema = schema.test(
+          'is-integer',
+          'Must be an integer',
+          (value) => value === undefined || Number.isInteger(value),
+        )
       shape[field.name] = schema
     }
 

@@ -138,7 +138,7 @@ watch(
 
 <template>
   <Card
-    class="w-full flex flex-col justify-start pt-4 border border-slate-200/70 bg-white/70 shadow-sm rounded-xl backdrop-blur"
+    class="w-full flex flex-col justify-start pt-4 border border-slate-200/70 bg-white/70 shadow-sm rounded-xl backdrop-blur min-h-[90vh]"
   >
     <CardHeader class="p-0">
       <CardTitle class="text-base md:text-lg font-semibold tracking-tight text-slate-900 pl-12"

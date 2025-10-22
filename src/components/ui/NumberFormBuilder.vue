@@ -15,7 +15,7 @@ const numberInputFields = ref<NumberFieldInputsT>({
   display: { label: '', placeholder: '' },
   prefill: { value: '' },
   value_constraints: { maximum: undefined, allow_decimal: 0 },
-  visible: { duration: '' },
+  visible: { duration: undefined },
   builder: { type: 'simple_input' },
   layout: 'Normal',
   type: 'Number',
@@ -42,7 +42,7 @@ const numberSchema = yup.object({
       .transform((v, o) => (o === '' || o === null ? undefined : v)),
     allow_decimal: yup.number().oneOf([0, 1]).required(),
   }),
-  visible: yup.object({ duration: yup.string().optional() }).optional(),
+  visible: yup.object({ duration: yup.number().optional() }).optional(),
   builder: yup.object({ type: yup.string().required() }),
   layout: yup.mixed<'Normal' | 'Compact'>().oneOf(['Normal', 'Compact']).required(),
   type: yup.string().oneOf(['Number']).required(),
@@ -89,7 +89,7 @@ function resetFormInputs() {
       display: { label: '', placeholder: '' },
       prefill: { value: '' },
       value_constraints: { maximum: undefined, allow_decimal: 0 },
-      visible: { duration: '' },
+      visible: { duration: undefined },
       builder: { type: 'simple_input' },
       layout: 'Normal',
       type: 'Number',
@@ -129,7 +129,7 @@ watch(
         maximum: value_constraints?.maximum ?? undefined,
         allow_decimal: value_constraints?.allow_decimal ?? 0,
       },
-      visible: { duration: visible?.duration || '' },
+      visible: { duration: visible?.duration || undefined },
       builder: { type: builder?.type || 'simple_input' },
       layout: layout || 'Normal',
       type: type || 'Number',
@@ -241,6 +241,7 @@ watch(
           <Input
             v-model="numberInputFields.visible.duration"
             placeholder=""
+            type="number"
             class="h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400"
           />
         </div>
