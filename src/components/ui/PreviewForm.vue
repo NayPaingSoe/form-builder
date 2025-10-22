@@ -7,6 +7,7 @@ import { useFormBuilderStore } from '@/stores/form_builder'
 import TextInputPreview from '@/components/ui/TextInputPreview.vue'
 import NumberInputPreview from '@/components/ui/NumberInputPreview.vue'
 import RadioInputPreview from '@/components/ui/RadioInputPreview.vue'
+import DateInputPreview from '@/components/ui/DateInputPreview.vue'
 import { VueDraggable } from 'vue-draggable-plus'
 import HeadingInputPreview from '@/components/ui/HeadingInputPreview.vue'
 
@@ -37,6 +38,8 @@ const items = computed(() => store.items)
             <NumberInputPreview v-else-if="item.type === 'Number'" :item="item" />
 
             <RadioInputPreview v-else-if="item.type === 'Radio'" :item="item" />
+
+            <DateInputPreview v-else-if="item.type === 'Date'" :item="item" />
 
             <div v-else class="text-xs text-slate-500">Unsupported field type: {{ item.type }}</div>
           </div>

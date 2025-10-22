@@ -65,6 +65,15 @@ const validationSchema = computed(() => {
       if (field.rule === 'required') schema = schema.required('This field is required')
       shape[field.name] = schema
     }
+
+    // Date
+    if (field.type === 'Date') {
+      let schema = yup
+        .string()
+        .test('is-date', 'Invalid date', (v) => !v || /^\d{4}-\d{2}-\d{2}$/.test(String(v)))
+      if (field.rule === 'required') schema = schema.required('This field is required')
+      shape[field.name] = schema
+    }
   }
 
   return yup.object(shape)
@@ -173,6 +182,24 @@ function getError(name: string): string | undefined {
                 <span class="text-sm text-slate-700 pl-2">{{ opt.label }}</span>
               </label>
             </div>
+            <p v-if="getError(item.name)" class="text-xs text-rose-600">
+              {{ getError(item.name) }}
+            </p>
+          </div>
+
+          <!-- Date -->
+          <div v-else-if="item.type === 'Date'" class="pb-4">
+            <label class="text-xs font-medium text-slate-600 mb-2 pb-1 block">
+              {{ item.display?.label }}
+              <span v-if="item.rule === 'required'" class="text-red-600"> *</span>
+            </label>
+            <Input
+              @update:modelValue="fields[item.name] = $event"
+              :modelValue="fields[item.name]"
+              type="date"
+              :placeholder="item.display?.placeholder"
+              class="h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400"
+            />
             <p v-if="getError(item.name)" class="text-xs text-rose-600">
               {{ getError(item.name) }}
             </p>

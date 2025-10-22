@@ -28,6 +28,7 @@
       <TextFormBuilder v-if="store.selectedField.value === 'text'" />
       <RadioFormBuilder v-if="store.selectedField.value === 'radio'" />
       <NumberFormBuilder v-if="store.selectedField.value === 'number'" />
+      <DateFormBuilder v-if="store.selectedField.value === 'date'" />
     </main>
 
     <main class="col-span-2 flex-1 min-h-[80vh]">
@@ -44,16 +45,18 @@ import NoSelectedFormBuilder from '@/components/ui/NoSelectedFormBuilder.vue'
 import RadioFormBuilder from '@/components/ui/RadioFormBuilder.vue'
 import NumberFormBuilder from '@/components/ui/NumberFormBuilder.vue'
 import HeadingFormBuilder from '@/components/ui/HeadingFormBuilder.vue'
+import DateFormBuilder from '@/components/ui/DateFormBuilder.vue'
 import { useFormBuilderStore } from '@/stores/form_builder'
 import type { Component } from 'vue'
-import { Heading1, Type, Calculator, CircleDot } from 'lucide-vue-next'
-type FieldValue = 'heading' | 'text' | 'number' | 'radio'
+import { Heading1, Type, Calculator, CircleDot, Calendar } from 'lucide-vue-next'
+type FieldValue = 'heading' | 'text' | 'number' | 'radio' | 'date'
 type FieldDef = { label: string; value: FieldValue }
 const fields: FieldDef[] = [
   { label: 'Heading', value: 'heading' },
   { label: 'Text Input', value: 'text' },
   { label: 'Number', value: 'number' },
   { label: 'Radio Btn', value: 'radio' },
+  { label: 'Date', value: 'date' },
 ]
 
 const store = useFormBuilderStore()
@@ -63,6 +66,7 @@ const iconByValue: Record<FieldValue, Component> = {
   text: Type,
   number: Calculator,
   radio: CircleDot,
+  date: Calendar,
 }
 
 function selectFieldHandler(field: { label: string; value: string }) {
