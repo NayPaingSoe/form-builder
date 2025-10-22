@@ -90,7 +90,7 @@ function resetFormInputs() {
     values: {
       name: '',
       display: { label: '', placeholder: '' },
-      props: { maxlength: 280 },
+      props: { maxlength: undefined },
       prefill: { value: '' },
       builder: { type: 'simple_input' },
       layout: 'Normal',
@@ -115,7 +115,7 @@ watch(
           placeholder: display?.placeholder || '',
         },
         ...(draft?.rule ? { rule: draft.rule } : {}),
-        props: { maxlength: props?.maxlength || 280 },
+        props: { maxlength: props?.maxlength || undefined },
         prefill: { value: (prefill?.value as string) || '' },
         builder: { type: builder?.type || 'simple_input' },
         layout: layout || 'Normal',
@@ -205,7 +205,7 @@ watch(
             :modelValue="fMaxlen"
             type="number"
             min="1"
-            placeholder="280"
+            placeholder=""
             class="h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400"
           />
           <span v-if="errors['props.maxlength']" class="text-xs text-rose-600 mt-1 block">

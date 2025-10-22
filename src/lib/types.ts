@@ -8,7 +8,7 @@ export interface inputsFieldsT {
   }[]
   value_constraints?: {
     minimum?: number
-    maximum: number | ''
+    maximum: number | undefined
     allow_decimal: number
   }
   props?: { maxlength?: number | null }
@@ -41,7 +41,7 @@ export interface NumberFieldInputsT {
   }
   value_constraints: {
     minimum?: number
-    maximum: number | ''
+    maximum: number | undefined
     allow_decimal: number
   }
   visible: {
