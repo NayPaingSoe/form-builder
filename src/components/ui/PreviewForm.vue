@@ -9,12 +9,11 @@ import NumberInputPreview from '@/components/ui/NumberInputPreview.vue'
 import RadioInputPreview from '@/components/ui/RadioInputPreview.vue'
 import { VueDraggable } from 'vue-draggable-plus'
 import HeadingInputPreview from '@/components/ui/HeadingInputPreview.vue'
-import type { inputsFieldsT } from '@/lib/types'
 
 const store = useFormBuilderStore()
 const router = useRouter()
 
-const items = computed(() => (store.items || []) as inputsFieldsT[])
+const items = computed(() => store.items)
 </script>
 
 <template>

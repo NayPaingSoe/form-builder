@@ -10,32 +10,20 @@ import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/yup'
 import { toast } from 'vue-sonner'
 
-// --- Store ---
 const store = useFormBuilderStore()
 
-const items = computed<inputsFieldsT[]>(() => (store.items as inputsFieldsT[]) || [])
+const items = computed(() => store.items)
 
-// --- Helpers ---
 function getInitialValues(items: inputsFieldsT[]) {
   const values: Record<string, string | number | boolean> = {}
   for (const field of items) {
     if (!field?.name) continue
     const prefill = field.prefill?.value
-    switch (field.type) {
-      case 'Radio':
-        values[field.name] = prefill ?? ''
-        break
-      case 'Number':
-        values[field.name] = prefill ?? ''
-        break
-      default:
-        values[field.name] = prefill ?? ''
-    }
+    values[field.name] = prefill ?? ''
   }
   return values
 }
 
-// --- Validation Schema ---
 const validationSchema = computed(() => {
   const shape: Record<string, yup.AnySchema> = {}
 
@@ -75,13 +63,11 @@ const validationSchema = computed(() => {
   return yup.object(shape)
 })
 
-// --- Form Setup ---
 const { errors, handleSubmit, values, setValues, defineField } = useForm({
   validationSchema: computed(() => toTypedSchema(validationSchema.value)),
   initialValues: getInitialValues(items.value),
 })
 
-// --- Field Registration ---
 const fields = ref<Record<string, string | number | boolean>>({})
 watch(
   items,
@@ -124,14 +110,17 @@ const onSubmit = handleSubmit((vals) => {
           <div v-if="item.type === 'Heading'" class="pt-3 pb-4">
             <p class="text-lg font-semibold!">{{ item.display?.label }}</p>
           </div>
+
           <!-- Text -->
           <div v-else-if="item.type === 'Text'" class="pb-4">
+            <pre>{{ fields[item.name] }}</pre>
             <label class="text-xs font-medium text-slate-600 mb-2 pb-1 block">
               {{ item.display?.label }}
               <span v-if="item.rule === 'required'" class="text-red-600"> *</span>
             </label>
             <Input
               @update:modelValue="fields[item.name] = $event"
+              :modelValue="fields[item.name]"
               :placeholder="item.display?.placeholder"
               class="h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400"
             />
@@ -148,6 +137,7 @@ const onSubmit = handleSubmit((vals) => {
             </label>
             <Input
               @update:modelValue="fields[item.name] = $event"
+              :modelValue="fields[item.name]"
               type="number"
               :placeholder="item.display?.placeholder"
               :max="item.value_constraints?.maximum"

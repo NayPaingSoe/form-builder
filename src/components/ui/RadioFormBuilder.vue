@@ -51,7 +51,7 @@ const radioSchema = yup.object({
 })
 
 const { errors, handleSubmit, defineField, setValues, resetForm } = useForm<
-  Required<Omit<RadioFieldInputsT, 'enum'>>
+  Omit<RadioFieldInputsT, 'enum'>
 >({
   validationSchema: toTypedSchema(radioSchema),
   initialValues: radioInputFields.value,
@@ -70,13 +70,13 @@ const onSubmit = handleSubmit((values) => {
   }
   const targetName =
     store.isEditingText && store.editingItemName ? store.editingItemName : values.name || 'field'
-  const updated: RadioFieldInputsT = {
+  const updated = {
     ...values,
     name: targetName,
     enum: options.value.map((o) => ({
       label: o.label,
       value: o.value,
-    })) as unknown as RadioFieldInputsT['enum'],
+    })),
   }
 
   const idx = store.items.findIndex((it) => it.name === targetName)
@@ -92,7 +92,6 @@ const onSubmit = handleSubmit((values) => {
     toast.success('Success', { description: 'Radio Field has been created' })
     resetFormInputs()
   }
-  console.log(store.items)
 })
 
 function resetFormInputs() {
@@ -132,8 +131,7 @@ watch(
       type: 'Radio',
     })
 
-    options.value = (dEnum?.map((o) => ({ label: o.label || '', value: o.value || '' })) ||
-      []) as RadioOption[]
+    options.value = dEnum?.map((o) => ({ label: o.label || '', value: o.value || '' })) || []
   },
   { immediate: true },
 )
@@ -152,7 +150,6 @@ watch(
 
     <div class="p-6 pt-0">
       <CardContent class="space-y-5 w-full max-w-2xl mx-auto">
-        <!-- Name -->
         <div class="pb-4">
           <label class="text-xs font-medium text-slate-600 mb-2 block"
             >Name <span class="text-red-600">*</span></label
@@ -165,7 +162,6 @@ watch(
           <span v-if="errors.name" class="text-xs text-rose-600 mt-1 block">{{ errors.name }}</span>
         </div>
 
-        <!-- Label -->
         <div class="pb-4">
           <label class="text-xs font-medium text-slate-600 mb-2 block"
             >Label <span class="text-red-600">*</span></label
@@ -180,7 +176,6 @@ watch(
           </span>
         </div>
 
-        <!-- Placeholder -->
         <div class="pb-4">
           <label class="text-xs font-medium text-slate-600 mb-2 block">Placeholder</label>
           <Input
@@ -193,7 +188,6 @@ watch(
           </span>
         </div>
 
-        <!-- Required -->
         <div class="pb-4 flex items-center gap-2">
           <input
             id="required"
@@ -204,7 +198,6 @@ watch(
           <label for="required" class="text-sm font-medium text-slate-700">Required</label>
         </div>
 
-        <!-- Radio Options Section -->
         <div class="pb-4">
           <div class="flex items-center justify-between mb-2">
             <label class="text-xs font-medium text-slate-600">Radio Options</label>
@@ -249,7 +242,6 @@ watch(
           </div>
         </div>
 
-        <!-- Layout -->
         <div class="pb-4">
           <label class="text-xs font-medium text-slate-600 mb-2 block">Layout</label>
           <select

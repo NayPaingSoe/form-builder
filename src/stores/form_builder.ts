@@ -24,7 +24,6 @@ export const useFormBuilderStore = defineStore('form_builder', () => {
   function startEditText(item: inputsFieldsT) {
     isEditingText.value = true
     editingItemName.value = item.name
-    // make a shallow copy for draft editing
     editTextDraft.value = { ...item }
   }
 
@@ -46,7 +45,6 @@ export const useFormBuilderStore = defineStore('form_builder', () => {
     removeItemByName,
     selectedField,
     setSelectedField,
-    // editing state/actions
     isEditingText,
     editingItemName,
     editTextDraft,

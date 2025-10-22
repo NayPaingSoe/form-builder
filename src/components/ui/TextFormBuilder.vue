@@ -54,11 +54,9 @@ const textSchema = yup.object({
   type: yup.string().oneOf(['Text']).required(),
 })
 
-const { errors, handleSubmit, defineField, setValues, resetForm } = useForm<
-  Required<TextFieldInputsT>
->({
+const { errors, handleSubmit, defineField, setValues, resetForm } = useForm<TextFieldInputsT>({
   validationSchema: toTypedSchema(textSchema),
-  initialValues: textInputFields.value as Required<TextFieldInputsT>,
+  initialValues: textInputFields.value,
 })
 
 const [fName] = defineField('name')
@@ -87,7 +85,6 @@ const onSubmit = handleSubmit((values) => {
     toast.success('Success', { description: 'Text Field has been created' })
     resetFormInputs()
   }
-  console.log(store.items)
 })
 
 const requiredBool = computed({
@@ -107,17 +104,17 @@ function resetFormInputs() {
       builder: { type: 'simple_input' },
       layout: 'Normal',
       type: 'Text',
-    } as Required<TextFieldInputsT>,
+    },
   })
 }
 
-// When entering edit mode, load the draft into the form
 watch(
   [() => store.isEditingText, () => store.editTextDraft],
   ([editing, draft]) => {
     if (editing && draft) {
       const sel = store.selectedField.value
       if (sel !== 'text') return
+
       const { display, props, prefill, builder, layout } = draft
       const name = draft?.name || ''
       setValues({
@@ -132,8 +129,7 @@ watch(
         builder: { type: (builder?.type as string) || 'simple_input' },
         layout: layout === 'Compact' ? 'Compact' : 'Normal',
         type: 'Text',
-      } as Required<TextFieldInputsT>)
-      console.log('editing')
+      })
     }
   },
   { immediate: true },
@@ -141,9 +137,13 @@ watch(
 </script>
 
 <template>
-  <Card class="w-full flex flex-col justify-start pt-4 border border-slate-200/70 bg-white/70 shadow-sm rounded-xl backdrop-blur">
+  <Card
+    class="w-full flex flex-col justify-start pt-4 border border-slate-200/70 bg-white/70 shadow-sm rounded-xl backdrop-blur"
+  >
     <CardHeader class="p-0">
-      <CardTitle class="text-base md:text-lg font-semibold tracking-tight text-slate-900 pl-12">Text</CardTitle>
+      <CardTitle class="text-base md:text-lg font-semibold tracking-tight text-slate-900 pl-12"
+        >Text</CardTitle
+      >
       <hr class="border-slate-200/70 w-full" />
     </CardHeader>
     <div class="p-6 pt-0">
@@ -152,7 +152,11 @@ watch(
           <label class="text-xs font-medium text-slate-600 mb-2 block"
             >Name <span class="text-red-600">*</span></label
           >
-          <Input v-model="fName" placeholder="unique_field_name" class="h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400" />
+          <Input
+            v-model="fName"
+            placeholder="unique_field_name"
+            class="h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400"
+          />
           <span v-if="errors.name" class="text-xs text-rose-600 mt-1 block">{{ errors.name }}</span>
         </div>
 
@@ -160,7 +164,11 @@ watch(
           <label class="text-xs font-medium text-slate-600 mb-2 block"
             >Label <span class="text-red-600">*</span></label
           >
-          <Input v-model="fLabel" placeholder="" class="h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400" />
+          <Input
+            v-model="fLabel"
+            placeholder=""
+            class="h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400"
+          />
           <span v-if="errors['display.label']" class="text-xs text-rose-600 mt-1 block">
             {{ errors['display.label'] }}
           </span>
@@ -168,7 +176,11 @@ watch(
 
         <div class="pb-4">
           <label class="text-xs font-medium text-slate-600 mb-2 block">Placeholder</label>
-          <Input v-model="fPlaceholder" placeholder="" class="h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400" />
+          <Input
+            v-model="fPlaceholder"
+            placeholder=""
+            class="h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400"
+          />
           <span v-if="errors['display.placeholder']" class="text-xs text-rose-600 mt-1 block">
             {{ errors['display.placeholder'] }}
           </span>
@@ -176,20 +188,35 @@ watch(
 
         <div class="pb-4">
           <label class="text-xs font-medium text-slate-600 mb-2 block">Predefined Value</label>
-          <Input v-model="fPrefill" placeholder="" class="h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400" />
+          <Input
+            v-model="fPrefill"
+            placeholder=""
+            class="h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400"
+          />
           <span v-if="errors['prefill.value']" class="text-xs text-rose-600 mt-1 block">
             {{ errors['prefill.value'] }}
           </span>
         </div>
 
         <div class="pb-4 flex items-center gap-2">
-          <input id="required" type="checkbox" v-model="requiredBool" class="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-2 focus:ring-slate-400" />
+          <input
+            id="required"
+            type="checkbox"
+            v-model="requiredBool"
+            class="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-2 focus:ring-slate-400"
+          />
           <label for="required" class="text-sm font-medium text-slate-700">Required</label>
         </div>
 
         <div class="pb-4">
           <label class="text-xs font-medium text-slate-600 mb-2 block">Max Length</label>
-          <Input v-model.number="fMaxlen" type="number" min="1" placeholder="280" class="h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400" />
+          <Input
+            v-model.number="fMaxlen"
+            type="number"
+            min="1"
+            placeholder="280"
+            class="h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400"
+          />
           <span v-if="errors['props.maxlength']" class="text-xs text-rose-600 mt-1 block">
             {{ errors['props.maxlength'] }}
           </span>
@@ -197,7 +224,10 @@ watch(
 
         <div class="pb-4">
           <label class="text-xs font-medium text-slate-600 mb-2 block">Layout</label>
-          <select v-model="fLayout" class="w-full h-9 rounded-md bg-white/80 border border-slate-200 px-3 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400">
+          <select
+            v-model="fLayout"
+            class="w-full h-9 rounded-md bg-white/80 border border-slate-200 px-3 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400"
+          >
             <option value="Normal">Normal</option>
             <option value="Compact">Compact</option>
           </select>
@@ -208,7 +238,10 @@ watch(
       </CardContent>
 
       <CardFooter class="flex justify-end">
-        <Button @click="onSubmit" class="h-9 px-6 rounded-md bg-slate-900 text-white hover:bg-slate-800 shadow-sm ring-1 ring-slate-900/10">
+        <Button
+          @click="onSubmit"
+          class="h-9 px-6 rounded-md bg-slate-900 text-white hover:bg-slate-800 shadow-sm ring-1 ring-slate-900/10"
+        >
           {{ store.isEditingText ? 'Update' : 'Add' }}
         </Button>
       </CardFooter>
