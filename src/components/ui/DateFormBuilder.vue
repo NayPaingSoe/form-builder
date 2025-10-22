@@ -81,6 +81,7 @@ watch(
     if (!editing || !draft) return
     const sel = store.selectedField.value
     if (sel !== 'date') return
+
     const { name, display, builder, layout, rule, type } = draft
     setValues({
       name: name || '',

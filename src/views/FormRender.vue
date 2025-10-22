@@ -20,7 +20,6 @@ const store = useFormBuilderStore()
 
 const items = computed(() => store.items)
 
-// Date picker state and helpers
 const df = new DateFormatter('en-US', { dateStyle: 'long' })
 const dateValues = ref<Record<string, DateValue | undefined>>({})
 
@@ -123,7 +122,6 @@ watch(
       if (!field?.name) continue
       const [inputRef] = defineField(field.name as any)
       next[field.name] = inputRef
-      // Keep any existing date selections; otherwise undefined
       nextDates[field.name] = dateValues.value[field.name]
     }
     fields.value = next

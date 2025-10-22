@@ -13,7 +13,6 @@ import { toTypedSchema } from '@vee-validate/yup'
 const numberInputFields = ref<NumberFieldInputsT>({
   name: '',
   display: { label: '', placeholder: '' },
-  // rule toggled via computed
   prefill: { value: '' },
   value_constraints: { maximum: 0, allow_decimal: 0 },
   visible: { duration: '' },

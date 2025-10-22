@@ -36,7 +36,7 @@ const onSubmit = handleSubmit((values) => {
     layout: 'Normal' as const,
     type: 'Heading',
   }
-  // Add or update if exists
+
   const idx = store.items.findIndex((it) => it.name === values.name)
   if (idx !== -1) {
     const next = [...store.items]
@@ -50,7 +50,6 @@ const onSubmit = handleSubmit((values) => {
   }
 })
 
-// When entering edit mode, load the draft into the form
 watch(
   [() => store.isEditingText, () => store.editTextDraft],
   ([editing, draft]) => {

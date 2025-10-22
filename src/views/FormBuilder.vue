@@ -1,6 +1,5 @@
 <template>
   <div class="grid mt-12 grid-cols-5 gap-3 w-full min-h-[80vh] text-slate-900">
-    <!-- Left Sidebar -->
     <aside
       class="col-span-1 border border-slate-200/70 bg-white/70 shadow-sm rounded-xl backdrop-blur overflow-hidden"
     >

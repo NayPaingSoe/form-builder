@@ -19,7 +19,6 @@ const options = ref<RadioOption[]>([{ label: 'First Choice', value: 'first_choic
 const radioInputFields = ref<RadioFieldInputsT>({
   name: '',
   display: { label: '', placeholder: '' },
-  // rule toggled via computed
   enum: [],
   builder: { type: 'simple_choice' },
   layout: 'Normal',
@@ -257,7 +256,6 @@ watch(
         </div>
       </CardContent>
 
-      <!-- Footer -->
       <CardFooter class="flex justify-end">
         <div class="flex gap-2">
           <Button

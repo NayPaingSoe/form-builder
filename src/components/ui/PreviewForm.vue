@@ -55,8 +55,6 @@ const items = computed(() => store.items)
         >
       </CardFooter>
     </div>
-    <pre>
-  <!-- {{ store }} -->
-</pre>
+    <pre></pre>
   </Card>
 </template>
