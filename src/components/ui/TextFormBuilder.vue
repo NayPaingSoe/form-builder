@@ -115,10 +115,10 @@ watch(
           placeholder: display?.placeholder || '',
         },
         ...(draft?.rule ? { rule: draft.rule } : {}),
-        props: { maxlength: (props?.maxlength as number) || 280 },
+        props: { maxlength: props?.maxlength || 280 },
         prefill: { value: (prefill?.value as string) || '' },
-        builder: { type: (builder?.type as string) || 'simple_input' },
-        layout: layout === 'Compact' ? 'Compact' : 'Normal',
+        builder: { type: builder?.type || 'simple_input' },
+        layout: layout || 'Normal',
         type: 'Text',
       })
     }

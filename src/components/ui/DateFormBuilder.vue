@@ -16,10 +16,8 @@ const dateSchema = yup.object({
   name: yup.string().trim().required('Name is required'),
   display: yup.object({
     label: yup.string().trim().required('Label is required'),
-    placeholder: yup.string().optional(),
   }),
   rule: yup.mixed<'required' | ''>().oneOf(['required', '']).optional(),
-  prefill: yup.object({ value: yup.string().optional() }),
   builder: yup.object({ type: yup.string().required() }),
   layout: yup.mixed<'Normal' | 'Compact'>().oneOf(['Normal', 'Compact']).required(),
   type: yup.string().oneOf(['Date']).required(),
@@ -29,9 +27,8 @@ const { errors, handleSubmit, defineField, setValues, resetForm } = useForm<inpu
   validationSchema: toTypedSchema(dateSchema),
   initialValues: {
     name: '',
-    display: { label: '', placeholder: '' },
+    display: { label: '' },
     rule: '',
-    prefill: { value: '' },
     builder: { type: 'simple_input' },
     layout: 'Normal',
     type: 'Date',
@@ -40,19 +37,18 @@ const { errors, handleSubmit, defineField, setValues, resetForm } = useForm<inpu
 
 const [fName] = defineField('name')
 const [fLabel] = defineField('display.label')
-const [fPlaceholder] = defineField('display.placeholder')
-const [fPrefill] = defineField('prefill.value')
 const [fRule] = defineField('rule')
 const requiredBool = computed({
-  get: () => (fRule.value as unknown as string) === 'required',
+  get: () => (fRule.value as string | undefined) === 'required',
   set: (v: boolean) => {
-    setValues({ rule: (v ? 'required' : '') as unknown as inputsFieldsT['rule'] } as Partial<inputsFieldsT>)
+    ;(fRule.value as string | undefined) = v ? 'required' : undefined
   },
 })
 const [fLayout] = defineField('layout')
 
 const onSubmit = handleSubmit((values) => {
-  const targetName = store.isEditingText && store.editingItemName ? store.editingItemName : values.name
+  const targetName =
+    store.isEditingText && store.editingItemName ? store.editingItemName : values.name
   const updated: inputsFieldsT = { ...(values as inputsFieldsT), name: targetName }
   const idx = store.items.findIndex((it) => it.name === targetName)
   if (idx >= 0) {
@@ -69,9 +65,8 @@ function resetFormInputs() {
   resetForm({
     values: {
       name: '',
-      display: { label: '', placeholder: '' },
+      display: { label: '' },
       rule: '',
-      prefill: { value: '' },
       builder: { type: 'simple_input' },
       layout: 'Normal',
       type: 'Date',
@@ -85,16 +80,15 @@ watch(
     if (!editing || !draft) return
     const sel = store.selectedField.value
     if (sel !== 'date') return
-    const { name, display, prefill, builder, layout, rule, type } = draft
+    const { name, display, builder, layout, rule, type } = draft
     setValues({
       name: name || '',
-      display: { label: display?.label || '', placeholder: display?.placeholder || '' },
-      rule: (rule as inputsFieldsT['rule']) || '',
-      prefill: { value: (prefill?.value as string) || '' },
+      display: { label: display?.label || '' },
+      rule: rule || '',
       builder: { type: builder?.type || 'simple_input' },
-      layout: (layout as 'Normal' | 'Compact') || 'Normal',
-      type: (type as string) || 'Date',
-    } as Partial<inputsFieldsT>)
+      layout: layout || 'Normal',
+      type: type || 'Date',
+    })
   },
   { immediate: true },
 )
@@ -137,14 +131,6 @@ watch(
           </span>
         </div>
 
-        <div class="pb-4">
-          <label class="text-xs font-medium text-slate-600 mb-2 block">Placeholder</label>
-          <Input
-            v-model="fPlaceholder"
-            class="h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400"
-          />
-        </div>
-
         <div class="pb-4 flex items-center gap-2">
           <input
             id="required"
@@ -153,15 +139,6 @@ watch(
             class="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-2 focus:ring-slate-400"
           />
           <label for="required" class="text-sm font-medium text-slate-700">Required</label>
-        </div>
-
-        <div class="pb-4">
-          <label class="text-xs font-medium text-slate-600 mb-2 block">Prefill</label>
-          <Input
-            v-model="fPrefill"
-            type="date"
-            class="h-9 rounded-md bg-white/80 border-slate-200 shadow-sm focus:ring-2 focus:ring-slate-950/5 focus:border-slate-400 placeholder:text-slate-400"
-          />
         </div>
 
         <div class="pb-4">

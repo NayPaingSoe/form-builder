@@ -127,7 +127,7 @@ watch(
       display: { label: display?.label || '', placeholder: display?.placeholder || '' },
       rule,
       builder: { type: builder?.type || 'simple_choice' },
-      layout: (layout as 'Normal' | 'Compact') || 'Normal',
+      layout: layout || 'Normal',
       type: 'Radio',
     })
 
