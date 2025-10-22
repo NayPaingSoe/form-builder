@@ -110,11 +110,15 @@ const onSubmit = handleSubmit((vals) => {
       <CardTitle class="text-lg text-center font-semibold pl-1">Form Render</CardTitle>
       <hr class="border-gray-300 w-full" />
     </CardHeader>
-    <div class="p-6">
+    <div class="p-6 pt-0">
       <CardContent class="space-y-6 w-full">
         <div v-for="item in items" :key="item.name" class="space-y-4">
+          <!-- Heading -->
+          <div v-if="item.type === 'Heading'" class="py-2">
+            <p class="text-lg font-semibold!">{{ item.display?.label }}</p>
+          </div>
           <!-- Text -->
-          <div v-if="item.type === 'Text'" class="pb-4">
+          <div v-else-if="item.type === 'Text'" class="pb-4">
             <label class="text-sm font-medium">
               {{ item.display?.label }}
               <span v-if="item.rule === 'required'" class="text-red-600"> *</span>
@@ -128,7 +132,7 @@ const onSubmit = handleSubmit((vals) => {
           </div>
 
           <!-- Number -->
-          <div v-if="item.type === 'Number'" class="pb-4">
+          <div v-else-if="item.type === 'Number'" class="pb-4">
             <label class="text-sm font-medium">
               {{ item.display?.label }}
               <span v-if="item.rule === 'required'" class="text-red-600"> *</span>
@@ -144,7 +148,7 @@ const onSubmit = handleSubmit((vals) => {
           </div>
 
           <!-- Radio -->
-          <div v-if="item.type === 'Radio'" class="pb-4">
+          <div v-else-if="item.type === 'Radio'" class="pb-4">
             <label class="text-sm font-medium block pb-1">
               {{ item.display?.label }}
               <span v-if="item.rule === 'required'" class="text-red-600"> *</span>

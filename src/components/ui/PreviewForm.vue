@@ -31,7 +31,7 @@ interface EnumOption {
   label: string
   value: string
 }
-type FieldType = 'Text' | 'Number' | 'Radio'
+type FieldType = 'Text' | 'Number' | 'Radio' | 'Heading'
 interface FormItem {
   name: string
   display?: DisplayConf
@@ -89,9 +89,13 @@ function isRequired(item: FormItem) {
       <CardContent class="space-y-6 w-full">
         <VueDraggable v-model="store.items">
           <div v-for="it in items" :key="it.name" class="space-y-2">
+            <!-- Heading -->
+            <div v-if="it.type === 'Heading'" class="py-4">
+              <p class="text-lg font-semibold!">{{ it.display?.label }}</p>
+            </div>
             <!-- Text Field -->
             <TextInputPreview
-              v-if="it.type === 'Text'"
+              v-else-if="it.type === 'Text'"
               :item="it"
               type="builder"
               v-model="formData[it.name]"
