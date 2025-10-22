@@ -29,7 +29,7 @@ a,
   body {
     display: flex;
     place-items: center;
-    margin-top: 100px;
+    margin-top: 40px;
   }
 
   #app {

@@ -112,7 +112,7 @@ const onSubmit = handleSubmit((vals) => {
     <CardContent class="space-y-6 w-full">
       <div v-for="item in items" :key="item.name" class="space-y-4">
         <!-- Text -->
-        <div v-if="item.type === 'Text'">
+        <div v-if="item.type === 'Text'" class="pb-4">
           <label class="text-sm font-medium">
             {{ item.display?.label }}
             <span v-if="item.rule === 'required'" class="text-red-600"> *</span>
@@ -126,7 +126,7 @@ const onSubmit = handleSubmit((vals) => {
         </div>
 
         <!-- Number -->
-        <div v-if="item.type === 'Number'">
+        <div v-if="item.type === 'Number'" class="pb-4">
           <label class="text-sm font-medium">
             {{ item.display?.label }}
             <span v-if="item.rule === 'required'" class="text-red-600"> *</span>
@@ -142,7 +142,7 @@ const onSubmit = handleSubmit((vals) => {
         </div>
 
         <!-- Radio -->
-        <div v-if="item.type === 'Radio'">
+        <div v-if="item.type === 'Radio'" class="pb-4">
           <label class="text-sm font-medium block pb-1">
             {{ item.display?.label }}
             <span v-if="item.rule === 'required'" class="text-red-600"> *</span>
@@ -155,7 +155,7 @@ const onSubmit = handleSubmit((vals) => {
                 :value="opt.value"
                 v-model="fields[item.name]"
               />
-              <span class="text-sm">{{ opt.label }}</span>
+              <span class="text-sm pl-2">{{ opt.label }}</span>
             </label>
           </div>
           <p v-if="errors[item.name]" class="text-xs text-red-600">{{ errors[item.name] }}</p>
@@ -171,7 +171,7 @@ const onSubmit = handleSubmit((vals) => {
       >
         Submit Form
       </Button>
-      <!-- <pre>{{ values }}</pre> -->
+      <pre>{{ values }}</pre>
     </CardFooter>
   </Card>
 </template>
