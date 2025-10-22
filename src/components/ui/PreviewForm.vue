@@ -78,6 +78,11 @@ watch(items, (nv) => initFormData(nv), { deep: true })
 function isRequired(item: FormItem) {
   return item?.rule === 'required'
 }
+
+// Helper to relax types for child preview components in template
+function asAny<T>(v: T): any {
+  return v as any
+}
 </script>
 
 <template>
@@ -91,11 +96,11 @@ function isRequired(item: FormItem) {
         <VueDraggable v-model="store.items">
           <div v-for="it in items" :key="it.name" class="space-y-2">
             <!-- Heading -->
-            <HeadingInputPreview v-if="it.type === 'Heading'" :item="it" />
+            <HeadingInputPreview v-if="it.type === 'Heading'" :item="asAny(it)" />
             <!-- Text Field -->
             <TextInputPreview
               v-else-if="it.type === 'Text'"
-              :item="it"
+              :item="asAny(it)"
               type="builder"
               v-model="formData[it.name]"
             />
@@ -103,14 +108,14 @@ function isRequired(item: FormItem) {
             <!-- Number Field -->
             <NumberInputPreview
               v-else-if="it.type === 'Number' && it.builder?.type === 'simple_input'"
-              :item="it"
+              :item="asAny(it)"
               v-model="formData[it.name]"
             />
 
             <!-- Radio Field -->
             <RadioInputPreview
               v-else-if="it.type === 'Radio' && it.builder?.type === 'simple_choice'"
-              :item="it"
+              :item="asAny(it)"
               v-model="formData[it.name]"
             />
 

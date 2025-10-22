@@ -2,13 +2,12 @@ export interface inputsFieldsT {
   name: string
   display: { label: string; placeholder?: string }
   rule?: string
-  enum?: [
-    {
-      label: string
-      value: string
-    }[],
-  ]
+  enum?: {
+    label: string
+    value: string
+  }[]
   value_constraints?: {
+    minimum?: number
     maximum: number | ''
     allow_decimal: number
   }
@@ -41,6 +40,7 @@ export interface NumberFieldInputsT {
     value: string | number | ''
   }
   value_constraints: {
+    minimum?: number
     maximum: number | ''
     allow_decimal: number
   }
@@ -60,12 +60,10 @@ export interface RadioFieldInputsT {
     label: string
     placeholder?: string
   }
-  enum?: [
-    {
-      label: string
-      value: string
-    }[],
-  ]
+  enum?: {
+    label: string
+    value: string
+  }[]
   builder: {
     type: string
   }

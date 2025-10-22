@@ -115,7 +115,6 @@ const requiredBool = computed({
   },
 })
 
-// When entering edit mode, load the draft into the form
 watch(
   [() => store.isEditingText, () => store.editTextDraft],
   ([editing, draft]) => {

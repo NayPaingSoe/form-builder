@@ -12,6 +12,10 @@ import { toast } from 'vue-sonner'
 
 // --- Store ---
 const store = useFormBuilderStore()
+
+function getError(name: string): string | undefined {
+  return (errors as any)[name] as string | undefined
+}
 const items = computed<inputsFieldsT[]>(() => (store.items as inputsFieldsT[]) || [])
 
 // --- Helpers ---
@@ -57,7 +61,8 @@ const validationSchema = computed(() => {
 
       const vc = field.value_constraints
       if (vc?.minimum !== undefined) schema = schema.min(vc.minimum, `Minimum is ${vc.minimum}`)
-      if (vc?.maximum !== undefined) schema = schema.max(vc.maximum, `Maximum is ${vc.maximum}`)
+      if (vc?.maximum !== undefined && typeof vc.maximum === 'number')
+        schema = schema.max(vc.maximum, `Maximum is ${vc.maximum}`)
       if (!vc?.allow_decimal) schema = schema.integer('Must be an integer')
 
       shape[field.name] = schema
@@ -89,7 +94,7 @@ watch(
     const next: Record<string, any> = {}
     for (const field of newItems) {
       if (!field?.name) continue
-      const [inputRef] = defineField(field.name)
+      const [inputRef] = defineField(field.name as any)
       next[field.name] = inputRef
     }
     fields.value = next
@@ -128,7 +133,7 @@ const onSubmit = handleSubmit((vals) => {
               :placeholder="item.display?.placeholder"
               :maxlength="item.props?.maxlength"
             />
-            <p v-if="errors[item.name]" class="text-xs text-red-600">{{ errors[item.name] }}</p>
+            <p v-if="getError(item.name)" class="text-xs text-red-600">{{ getError(item.name) }}</p>
           </div>
 
           <!-- Number -->
