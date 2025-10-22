@@ -72,7 +72,6 @@ const fields = ref<Record<string, string | number | boolean>>({})
 watch(
   items,
   (newItems) => {
-    console.log('initialValue', getInitialValues(items.value))
     const next: Record<string, string | number | boolean> = {}
     for (const field of newItems) {
       if (!field?.name) continue
@@ -80,13 +79,11 @@ watch(
       next[field.name] = inputRef
     }
     fields.value = next
-    console.log('fields', fields)
     setValues(getInitialValues(newItems))
   },
   { immediate: true, deep: true },
 )
 
-// --- Submit ---
 const onSubmit = handleSubmit((vals) => {
   toast.success('Submitted values', { description: JSON.stringify(vals) })
 })
@@ -112,8 +109,7 @@ const onSubmit = handleSubmit((vals) => {
           </div>
 
           <!-- Text -->
-          <div v-else-if="item.type === 'Text'" class="pb-4">
-            <pre>{{ fields[item.name] }}</pre>
+          <div v-if="item.type === 'Text'" class="pb-4">
             <label class="text-xs font-medium text-slate-600 mb-2 pb-1 block">
               {{ item.display?.label }}
               <span v-if="item.rule === 'required'" class="text-red-600"> *</span>
@@ -130,7 +126,7 @@ const onSubmit = handleSubmit((vals) => {
           </div>
 
           <!-- Number -->
-          <div v-else-if="item.type === 'Number'" class="pb-4">
+          <div v-if="item.type === 'Number'" class="pb-4">
             <label class="text-xs font-medium text-slate-600 mb-2 pb-1 block">
               {{ item.display?.label }}
               <span v-if="item.rule === 'required'" class="text-red-600"> *</span>
