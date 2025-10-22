@@ -17,7 +17,7 @@ const textInputFields = ref<TextFieldInputsT>({
     placeholder: '',
   },
   props: {
-    maxlength: 40,
+    maxlength: null,
   },
   prefill: {
     value: '',
@@ -36,15 +36,6 @@ const textSchema = yup.object({
   display: yup.object({
     label: yup.string().trim().required('Label is required'),
     placeholder: yup.string().optional(),
-  }),
-  props: yup.object({
-    maxlength: yup
-      .number()
-      .typeError('Max Length must be a number')
-      .integer('Max Length must be an integer')
-      .min(1, 'Max Length must be at least 1')
-      .max(1000, 'Max Length is too large')
-      .required('Max Length is required'),
   }),
   prefill: yup.object({
     value: yup.string().optional(),
@@ -211,7 +202,7 @@ watch(
         <div class="pb-4">
           <label class="text-xs font-medium text-slate-600 mb-2 block">Max Length</label>
           <Input
-            v-model.number="fMaxlen"
+            :modelValue="fMaxlen"
             type="number"
             min="1"
             placeholder="280"

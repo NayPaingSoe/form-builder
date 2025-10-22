@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -30,18 +30,14 @@ const items = computed(() => store.items)
       <CardContent class="space-y-6 w-full max-w-2xl mx-auto">
         <VueDraggable v-model="store.items">
           <div v-for="item in items" :key="item.name" class="space-y-2">
-            <!-- Heading -->
             <HeadingInputPreview v-if="item.type === 'Heading'" :item="item" />
-            <!-- Text Field -->
+
             <TextInputPreview v-else-if="item.type === 'Text'" :item="item" />
 
-            <!-- Number Field -->
             <NumberInputPreview v-else-if="item.type === 'Number'" :item="item" />
 
-            <!-- Radio Field -->
             <RadioInputPreview v-else-if="item.type === 'Radio'" :item="item" />
 
-            <!-- Fallback display -->
             <div v-else class="text-xs text-slate-500">Unsupported field type: {{ item.type }}</div>
           </div>
         </VueDraggable>

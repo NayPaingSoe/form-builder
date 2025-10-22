@@ -25,11 +25,10 @@ async function editFiled() {
 
 <template>
   <div class="pb-4">
-    <div class="pb-1">
-      <label class="text-sm font-medium">
-        {{ item.display.label }}<span v-if="item.rule === 'required'" class="text-red-600"> *</span>
-      </label>
-    </div>
+    <label class="text-xs font-medium text-slate-600 mb-2 pb-1 block">
+      {{ item.display?.label }}
+      <span v-if="item.rule === 'required'" class="text-red-600"> *</span>
+    </label>
     <div class="flex gap-2">
       <Input
         :modelValue="item.prefill?.value"

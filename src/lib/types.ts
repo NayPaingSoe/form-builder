@@ -11,7 +11,7 @@ export interface inputsFieldsT {
     maximum: number | ''
     allow_decimal: number
   }
-  props?: { maxlength?: number }
+  props?: { maxlength?: number | null }
   prefill?: { value?: string | number | '' }
   builder: { type: string }
   visible?: {
@@ -25,7 +25,7 @@ export interface TextFieldInputsT {
   name: string
   display: { label: string; placeholder?: string }
   rule?: string
-  props: { maxlength?: number }
+  props: { maxlength?: number | null }
   prefill: { value?: string | '' }
   builder: { type: string }
   layout: 'Normal' | 'Compact'

@@ -18,16 +18,14 @@ function editFiled() {
   store.startEditText(item)
 }
 </script>
-
 <template>
   <div class="flex flex-col gap-0 pb-4">
-    <div class="">
-      <label class="text-sm font-medium">
-        {{ item.display?.label
-        }}<span v-if="item.rule === 'required'" class="text-red-600"> *</span>
-      </label>
-    </div>
-    <div class="flex justify-between gap-2 pt-1">
+    <label class="text-xs font-medium text-slate-600 block">
+      {{ item.display?.label }}
+      <span v-if="item.rule === 'required'" class="text-red-600"> *</span>
+    </label>
+
+    <div class="flex justify-between gap-2">
       <label
         v-for="opt in item.enum || []"
         :key="item.name + '_' + opt.value"

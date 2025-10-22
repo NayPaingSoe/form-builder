@@ -41,7 +41,14 @@ const validationSchema = computed(() => {
 
     // Number
     if (field.type === 'Number') {
-      let schema = yup.number().typeError('Must be a number')
+      let schema = yup
+        .number()
+        .transform((value, originalValue) =>
+          originalValue === '' || originalValue === null ? undefined : value,
+        )
+        .typeError('Must be a number')
+        .optional()
+
       if (field.rule === 'required') schema = schema.required('This field is required')
       const vc = field.value_constraints
       if (vc?.minimum !== undefined) schema = schema.min(vc.minimum, `Minimum is ${vc.minimum}`)
@@ -63,7 +70,7 @@ const validationSchema = computed(() => {
   return yup.object(shape)
 })
 
-const { errors, handleSubmit, values, setValues, defineField } = useForm({
+const { errors, handleSubmit, setValues, defineField } = useForm({
   validationSchema: computed(() => toTypedSchema(validationSchema.value)),
   initialValues: getInitialValues(items.value),
 })
@@ -88,7 +95,7 @@ const onSubmit = handleSubmit((vals) => {
   toast.success('Submitted values', { description: JSON.stringify(vals) })
 })
 function getError(name: string): string | undefined {
-  return (errors as any)[name] as string | undefined
+  return (errors as any).value[name] as string | undefined
 }
 </script>
 
@@ -181,7 +188,6 @@ function getError(name: string): string | undefined {
         >
           Submit Form
         </Button>
-        <!-- <pre>{{ validationSchema }}</pre> -->
       </CardFooter>
     </div>
   </Card>

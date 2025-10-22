@@ -1,5 +1,5 @@
 <template>
-  <div class="grid mt-12 grid-cols-5 gap-4 w-full min-h-[80vh] text-slate-900">
+  <div class="grid mt-12 grid-cols-5 gap-3 w-full min-h-[80vh] text-slate-900">
     <!-- Left Sidebar -->
     <aside
       class="col-span-1 border border-slate-200/70 bg-white/70 shadow-sm rounded-xl backdrop-blur overflow-hidden"
@@ -8,14 +8,15 @@
         Fields
       </p>
       <hr class="border-slate-200/70 w-full" />
-      <div class="grid grid-cols-2 gap-2 overflow-y-auto p-4">
+      <div class="grid grid-cols-2 gap-2 overflow-y-auto p-1">
         <Button
           v-for="(field, i) in fields"
           :key="i"
           variant="outline"
-          class="w-full h-9 rounded-md font-medium!"
+          class="px-1 w-full h-9 rounded-md font-medium! text-xs flex items-center gap-2 justify-start"
           @click="selectFieldHandler(field)"
         >
+          <component :is="iconByValue[field.value]" class="h-4 w-4 stroke-[1.75]" />
           {{ field.label }}
         </Button>
       </div>
@@ -44,14 +45,25 @@ import RadioFormBuilder from '@/components/ui/RadioFormBuilder.vue'
 import NumberFormBuilder from '@/components/ui/NumberFormBuilder.vue'
 import HeadingFormBuilder from '@/components/ui/HeadingFormBuilder.vue'
 import { useFormBuilderStore } from '@/stores/form_builder'
-const fields = [
+import type { Component } from 'vue'
+import { Heading1, Type, Calculator, CircleDot } from 'lucide-vue-next'
+type FieldValue = 'heading' | 'text' | 'number' | 'radio'
+type FieldDef = { label: string; value: FieldValue }
+const fields: FieldDef[] = [
   { label: 'Heading', value: 'heading' },
-  { label: 'Text', value: 'text' },
+  { label: 'Text Input', value: 'text' },
   { label: 'Number', value: 'number' },
   { label: 'Radio Btn', value: 'radio' },
 ]
 
 const store = useFormBuilderStore()
+
+const iconByValue: Record<FieldValue, Component> = {
+  heading: Heading1,
+  text: Type,
+  number: Calculator,
+  radio: CircleDot,
+}
 
 function selectFieldHandler(field: { label: string; value: string }) {
   store.setSelectedField(field)
